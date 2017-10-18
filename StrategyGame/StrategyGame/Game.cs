@@ -8,6 +8,7 @@ namespace StrategyGame
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Map map;
 
         public Game()
         {
@@ -17,7 +18,7 @@ namespace StrategyGame
 
         protected override void Initialize()
         {
-
+            map = new Map();
 
             base.Initialize();
         }
@@ -26,7 +27,8 @@ namespace StrategyGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-
+            TextureManager.LoadContent(Content);
+            map.LoadMap("krenger");
         }
 
         protected override void UnloadContent()
@@ -46,7 +48,11 @@ namespace StrategyGame
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            spriteBatch.Begin();
 
+            map.Draw(spriteBatch);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

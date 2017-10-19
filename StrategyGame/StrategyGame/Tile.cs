@@ -18,15 +18,17 @@ namespace StrategyGame
         public Tile(Texture2D texture, int X, int Y, int Cost)
         {
             this.texture = texture;
-            position = new Point(X, Y);
+            position = new Point(X*Game.TileSize*Game.GameScale, Y * Game.TileSize * Game.GameScale);
             cost = Cost;
             rectangle = texture.Bounds;
             rectangle.Offset(position);
+            rectangle.Width *= Game.GameScale;
+            rectangle.Height *= Game.GameScale;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, texture.Bounds, Color.White);
+            spriteBatch.Draw(texture, rectangle, Color.White);
         }
     }
 }

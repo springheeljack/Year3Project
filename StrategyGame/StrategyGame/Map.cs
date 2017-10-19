@@ -14,14 +14,16 @@ namespace StrategyGame
 
         public bool LoadMap(string mapPath)
         {
-            width = 40;
-            height = 20;
+            string[] read;
+            read = System.IO.File.ReadAllLines("Content/Map/"+mapPath + ".sgmap");
+            width = int.Parse(read[0]);
+            height = int.Parse(read[1]);
 
             tiles = new Tile[width, height];
 
             for (int x = 0; x < width; x++)
                 for (int y = 0; y < height; y++)
-                    tiles[x, y] = new Tile(TextureManager.TileTextures["Grass"], x, y, 1);
+                    tiles[x, y] = new Tile(TextureManager.TileTextures["Water"], x, y, 1);
 
             return true;
         }

@@ -10,7 +10,13 @@ namespace StrategyGame
 {
     public static class MainMenu
     {
-        static int currentSelection = 0;
+        static Button[] buttons = new Button[2];
+
+        static MainMenu()
+        {
+            buttons[0] = new Button(ButtonType.OpenMapEditor);
+            buttons[1] = new Button(ButtonType.QuitGame);
+        }
 
         public static void Update()
         {

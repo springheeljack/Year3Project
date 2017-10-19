@@ -16,6 +16,9 @@ namespace StrategyGame
             get { return tileTextures; }
         }
 
+        static Dictionary<string, Texture2D> uiTextures;
+        public static Dictionary<string, Texture2D> UITextures;
+
         static string[] tilePaths = { "Grass", "Water", "Test" };
 
         static TextureManager()

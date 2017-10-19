@@ -6,7 +6,8 @@ namespace StrategyGame
 {
     public enum Screen
     {
-        MainMenu
+        MainMenu,
+        MapEditor
     }
 
     public class Game : Microsoft.Xna.Framework.Game
@@ -16,7 +17,9 @@ namespace StrategyGame
         public static readonly int WindowWidth = 1280;
         public static readonly int WindowHeight = 720;
 
-        public static Screen screen = Screen.MainMenu;
+        static Screen screen = Screen.MainMenu;
+
+        public static bool Quit = false;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -55,7 +58,7 @@ namespace StrategyGame
             switch(screen)
             {
                 case Screen.MainMenu:
-
+                    MainMenu.Update();
                     break;
             }
 
@@ -68,11 +71,21 @@ namespace StrategyGame
 
             spriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,SamplerState.PointClamp,null,null,null,null);
 
-
+            switch(screen)
+            {
+                case Screen.MainMenu:
+                    MainMenu.Draw(spriteBatch);
+                    break;
+            }
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public static void ChangeScreen(Screen screen)
+        {
+
         }
     }
 }

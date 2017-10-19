@@ -4,12 +4,19 @@ using Microsoft.Xna.Framework.Input;
 
 namespace StrategyGame
 {
+    public enum Screen
+    {
+        MainMenu
+    }
+
     public class Game : Microsoft.Xna.Framework.Game
     {
         public static readonly int TileSize = 16;
         public static readonly int GameScale = 2;
         public static readonly int WindowWidth = 1280;
         public static readonly int WindowHeight = 720;
+
+        public static Screen screen = Screen.MainMenu;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -26,7 +33,7 @@ namespace StrategyGame
 
         protected override void Initialize()
         {
-            map = new Map();
+
 
             base.Initialize();
         }
@@ -36,7 +43,6 @@ namespace StrategyGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             TextureManager.LoadContent(Content);
-            map.LoadMap("test");
         }
 
         protected override void UnloadContent()
@@ -46,8 +52,12 @@ namespace StrategyGame
 
         protected override void Update(GameTime gameTime)
         {
+            switch(screen)
+            {
+                case Screen.MainMenu:
 
-
+                    break;
+            }
 
             base.Update(gameTime);
         }
@@ -58,7 +68,7 @@ namespace StrategyGame
 
             spriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,SamplerState.PointClamp,null,null,null,null);
 
-            map.Draw(spriteBatch);
+
 
             spriteBatch.End();
 

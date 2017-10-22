@@ -11,7 +11,8 @@ namespace StrategyGame
 {
     public static class MainMenu
     {
-        static Button[] buttons = new Button[2];
+        static readonly int numOfButtons = 2;
+        static Button[] buttons = new Button[numOfButtons];
         static Point position = new Point(100, 100);
         static int buttonYOffset = 100;
 
@@ -26,7 +27,7 @@ namespace StrategyGame
             buttons[0] = new ButtonEnterMapEditor();
             buttons[1] = new ButtonQuit();
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < numOfButtons; i++)
             {
                 buttons[i].Initialize(new Point(position.X, position.Y + i * buttonYOffset), TextureManager.UITextures["Button"]);
             }

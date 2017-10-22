@@ -17,10 +17,12 @@ namespace StrategyGame
         public static readonly int WindowWidth = 1280;
         public static readonly int WindowHeight = 720;
         public static readonly Point WindowPosition = new Point(200);
+        public static readonly Rectangle FadeRectangle = new Rectangle(0, 0, WindowWidth, WindowHeight);
 
         static Screen screen = Screen.MainMenu;
 
         public static bool Quit = false;
+        public static bool PauseMenu = false;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -63,11 +65,15 @@ namespace StrategyGame
 
             //Input
             MouseExtension.Update();
+            KeyboardExtension.Update();
 
             switch (screen)
             {
                 case Screen.MainMenu:
                     MainMenu.Update();
+                    break;
+                case Screen.MapEditor:
+                    MapEditor.Update();
                     break;
             }
 
@@ -89,7 +95,7 @@ namespace StrategyGame
                     MainMenu.Draw(spriteBatch);
                     break;
                 case Screen.MapEditor:
-                    map.Draw(spriteBatch);
+                    MapEditor.Draw(spriteBatch);
                     break;
             }
 
@@ -100,13 +106,22 @@ namespace StrategyGame
 
         public static void ChangeScreen(Screen newScreen)
         {
+            screen = newScreen;
             switch (newScreen)
             {
                 case Screen.MapEditor:
-                    screen = newScreen;
                     map.LoadMap("test");
                     break;
+                case Screen.MainMenu:
+                    Game.PauseMenu = false;
+                    break;
             }
+        }
+
+        public static void PauseMenuSwitch()
+        {
+            if (KeyboardExtension.IsKeyHit(Keys.Escape))
+                PauseMenu = !PauseMenu;
         }
     }
 }

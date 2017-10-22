@@ -78,4 +78,20 @@ namespace StrategyGame
             Game.ChangeScreen(Screen.MapEditor);
         }
     }
+
+    public class ButtonEnterMainMenu : Button
+    {
+        new static string text = "Main Menu";
+        public ButtonEnterMainMenu(Point position, Texture2D texture) : base(position, texture, text)
+        {
+        }
+        public ButtonEnterMainMenu() : base(text)
+        {
+        }
+
+        public override void Action()
+        {
+            Game.ChangeScreen(Screen.MainMenu);
+        }
+    }
 }

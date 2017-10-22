@@ -16,6 +16,7 @@ namespace StrategyGame
         public static readonly int GameScale = 2;
         public static readonly int WindowWidth = 1280;
         public static readonly int WindowHeight = 720;
+        public static readonly Point WindowPosition = new Point(200);
 
         static Screen screen = Screen.MainMenu;
 
@@ -23,7 +24,7 @@ namespace StrategyGame
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Map map;
+        public static Map map = new Map();
 
         public Game()
         {
@@ -31,7 +32,9 @@ namespace StrategyGame
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
+            Window.Position = WindowPosition;
             IsMouseVisible = true;
+            graphics.ApplyChanges();
         }
 
         protected override void Initialize()
@@ -55,12 +58,21 @@ namespace StrategyGame
 
         protected override void Update(GameTime gameTime)
         {
-            switch(screen)
+            if (!MainMenu.Initialized)
+                MainMenu.Initialize();
+
+            //Input
+            MouseExtension.Update();
+
+            switch (screen)
             {
                 case Screen.MainMenu:
                     MainMenu.Update();
                     break;
             }
+
+            if (Quit)
+                Exit();
 
             base.Update(gameTime);
         }
@@ -69,12 +81,15 @@ namespace StrategyGame
         {
             GraphicsDevice.Clear(Color.Magenta);
 
-            spriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,SamplerState.PointClamp,null,null,null,null);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, null);
 
-            switch(screen)
+            switch (screen)
             {
                 case Screen.MainMenu:
                     MainMenu.Draw(spriteBatch);
+                    break;
+                case Screen.MapEditor:
+                    map.Draw(spriteBatch);
                     break;
             }
 
@@ -83,9 +98,15 @@ namespace StrategyGame
             base.Draw(gameTime);
         }
 
-        public static void ChangeScreen(Screen screen)
+        public static void ChangeScreen(Screen newScreen)
         {
-
+            switch (newScreen)
+            {
+                case Screen.MapEditor:
+                    screen = newScreen;
+                    map.LoadMap("test");
+                    break;
+            }
         }
     }
 }

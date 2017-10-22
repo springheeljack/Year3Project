@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,20 @@ namespace StrategyGame
     public static class MouseExtension
     {
         static ClickState left = ClickState.Up;
+        public static ClickState Left
+        {
+            get { return left; }
+        }
         static ClickState right = ClickState.Up;
+        public static ClickState Right
+        {
+            get { return right; }
+        }
+        static Rectangle rectangle = new Rectangle(new Point(0), new Point(1));
+        public static Rectangle Rectangle
+        {
+            get { return rectangle; }
+        }
 
         public static void Update()
         {
@@ -42,6 +56,7 @@ namespace StrategyGame
                 else
                     right = ClickState.Held;
             }
+            rectangle.Location = mouseState.Position;
         }
     }
 }

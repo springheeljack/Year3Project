@@ -61,3 +61,10 @@
 /processorParam:TextureFormat=Color
 /build:UI/Button.png
 
+#begin Font/spriteFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Font/spriteFont.spritefont
+

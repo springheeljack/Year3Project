@@ -8,34 +8,74 @@ using System.Threading.Tasks;
 
 namespace StrategyGame
 {
-    public enum ButtonType
+    public abstract class Button
     {
-        QuitGame,
-        OpenMapEditor
-    }
+        public Rectangle rectangle;
+        public Texture2D texture;
+        public string text;
 
-    public class Button
-    {
-        Rectangle rectangle;
-        Texture2D texture;
-
-        ButtonType buttonType;
-        public Button(ButtonType ButtonType)
+        public Button(Point position, Texture2D texture, string text)
         {
-            buttonType = ButtonType;
+            this.texture = texture;
+            rectangle = new Rectangle(position, texture.Bounds.Size);
+            this.text = text;
+        }
+        public Button(string text)
+        {
+            this.text = text;
         }
 
-        public void Action()
+        public abstract void Action();
+
+        public void Update()
         {
-            switch(buttonType)
-            {
-                case ButtonType.QuitGame:
-                    Game.Quit = true;
-                    break;
-                case ButtonType.OpenMapEditor:
-                    Game.ChangeScreen(Screen.MapEditor);
-                    break;
-            }
+            if (MouseExtension.Left == ClickState.Clicked)
+                if (MouseExtension.Rectangle.Intersects(rectangle))
+                    Action();
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(texture, rectangle, Color.White);
+            spriteBatch.DrawString(TextureManager.SpriteFont, text, TextureManager.CenterString(rectangle, TextureManager.SpriteFont, text), Color.Black);
+        }
+
+        public void Initialize(Point position, Texture2D texture)
+        {
+            this.texture = texture;
+            rectangle = new Rectangle(position, texture.Bounds.Size);
+        }
+    }
+
+    public class ButtonQuit : Button
+    {
+        new static string text = "Quit";
+        public ButtonQuit(Point position, Texture2D texture) : base(position, texture, text)
+        {
+        }
+        public ButtonQuit() :base(text)
+        {
+        }
+
+        public override void Action()
+        {
+            Game.Quit = true;
+        }
+    }
+
+    public class ButtonEnterMapEditor : Button
+    {
+        new static string text = "Map Editor";
+        public ButtonEnterMapEditor(Point position, Texture2D texture) : base(position, texture, text)
+        {
+        }
+        public ButtonEnterMapEditor() : base(text)
+        {
+        }
+
+        public override void Action()
+        {
+            Game.ChangeScreen(Screen.MapEditor);
         }
     }
 }

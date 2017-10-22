@@ -12,16 +12,44 @@ namespace StrategyGame
         Tile[,] tiles;
         int width, height;
 
+        static string[] tileTextures = { "Grass", "Water", "Test" };
+
         public bool LoadMap(string mapPath)
         {
-            width = 40;
-            height = 20;
+            string[] read;
+            read = System.IO.File.ReadAllLines("Content/Map/" + mapPath + ".sgmap");
+            width = int.Parse(read[0]);
+            height = int.Parse(read[1]);
 
             tiles = new Tile[width, height];
 
-            for (int x = 0; x < width; x++)
-                for (int y = 0; y < height; y++)
-                    tiles[x, y] = new Tile(TextureManager.TileTextures["Grass"], x, y, 1);
+            string temp = "";
+            int tileTexture = 0;
+            int cost;
+            for (int y = 0; y < height; y++)
+            {
+                int x = 0;
+                for (int i = 0; i < read[y + 2].Length; i++)
+                {
+                    if (read[y + 2][i] == ',')
+                    {
+                        tileTexture = int.Parse(temp);
+                        temp = "";
+                    }
+                    else if (read[y + 2][i] == '|')
+                    {
+                        cost = int.Parse(temp);
+                        temp = "";
+                        tiles[x, y] = new Tile(TextureManager.TileTextures[tileTextures[tileTexture]], x, y, cost);
+                        x++;
+                    }
+                    else
+                    {
+                        temp += read[y + 2][i];
+                    }
+                }
+                temp = "";
+            }
 
             return true;
         }

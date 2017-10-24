@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace StrategyGame
 {
@@ -6,13 +7,13 @@ namespace StrategyGame
     {
         Tile[,] tiles;
         int width, height;
+        public int Width { get { return width; } }
+        public int Height { get { return height; } }
 
-        static string[] tileTextures = { "Grass", "Water", "Test" };
-
-        public bool LoadMap(string mapPath)
+        public bool LoadMap(string filePath)
         {
             string[] read;
-            read = System.IO.File.ReadAllLines("Content/Map/" + mapPath + ".sgmap");
+            read = System.IO.File.ReadAllLines("Content/Map/" + filePath + ".sgmap");
             width = int.Parse(read[0]);
             height = int.Parse(read[1]);
 
@@ -35,7 +36,7 @@ namespace StrategyGame
                     {
                         cost = int.Parse(temp);
                         temp = "";
-                        tiles[x, y] = new Tile(TextureManager.TileTextures[tileTextures[tileTexture]], x, y, cost);
+                        tiles[x, y] = new Tile(TextureManager.TileTextures[TextureManager.tilePaths[tileTexture]], x, y, cost, tileTexture);
                         x++;
                     }
                     else
@@ -53,6 +54,29 @@ namespace StrategyGame
         {
             foreach (Tile t in tiles)
                 t.Draw(spriteBatch);
+        }
+
+        public void ChangeTile(int X, int Y, string Tile,int TileIndex)
+        {
+            tiles[X, Y].Texture = TextureManager.TileTextures[Tile];
+            tiles[X, Y].TextureIndex = TileIndex;
+        }
+
+        public void SaveMap(string filePath)
+        {
+            System.IO.File.Delete("Content/Map/" + filePath + ".sgmap");
+            string data = "";
+            data += width.ToString() + "\r\n";
+            data += height.ToString() + "\r\n";
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    data += tiles[x, y].TextureIndex.ToString() + "," + tiles[x, y].Cost + "|";
+                }
+                data += "\r\n";
+            }
+            System.IO.File.WriteAllText("Content/Map/" + filePath + ".sgmap", data);
         }
     }
 }

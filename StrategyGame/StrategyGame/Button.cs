@@ -48,7 +48,7 @@ namespace StrategyGame
         public ButtonQuit(Point position, Texture2D texture) : base(position, texture, text)
         {
         }
-        public ButtonQuit() :base(text)
+        public ButtonQuit() : base(text)
         {
         }
 
@@ -87,6 +87,67 @@ namespace StrategyGame
         public override void Action()
         {
             Game.ChangeScreen(Screen.MainMenu);
+        }
+    }
+
+    public class ButtonMapEditorSelectTile : Button
+    {
+        int textureIndex;
+        string tile;
+        public string Tile
+        {
+            get { return tile; }
+            set
+            {
+                tile = value;
+                texture = TextureManager.TileTextures[tile];
+            }
+        }
+        public ButtonMapEditorSelectTile(Point position, string tile, int textureIndex) : base("")
+        {
+            this.tile = tile;
+            this.textureIndex = textureIndex;
+            Initialize(position, TextureManager.TileTextures[tile]);
+            Resize();
+        }
+        public override void Action()
+        {
+            MapEditor.ChangeSelectedTile(tile, rectangle.Location,textureIndex);
+        }
+
+        void Resize()
+        {
+            rectangle.Width *= 2;
+            rectangle.Height *= 2;
+        }
+    }
+
+    public class ButtonMapEditorSaveMap : Button
+    {
+        new static string text = "Save Map";
+        public ButtonMapEditorSaveMap(Point position, Texture2D texture) : base(position, texture, text)
+        {
+        }
+        public ButtonMapEditorSaveMap() : base(text)
+        {
+        }
+
+        public override void Action()
+        {
+            Game.map.SaveMap("savetest");
+        }
+    }
+
+    public class ButtonMapEditorLoadMap : Button
+    {
+        new static string text = "Load Map";
+        public ButtonMapEditorLoadMap(Point position, Texture2D texture) : base(position, texture, text)
+        {
+        }
+
+        public override void Action()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

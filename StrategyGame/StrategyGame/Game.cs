@@ -14,6 +14,7 @@ namespace StrategyGame
     {
         public static readonly int TileSize = 16;
         public static readonly int GameScale = 2;
+        public static readonly int TileSizeScaled = TileSize * GameScale;
         public static readonly int WindowWidth = 1280;
         public static readonly int WindowHeight = 720;
         public static readonly Point WindowPosition = new Point(200);

@@ -25,8 +25,8 @@ namespace StrategyGame
             get { return uiTextures; }
         }
 
-        static string[] tilePaths = { "Grass", "Water", "Test" };
-        static string[] uiPaths = { "Button", "Fade" };
+        public static string[] tilePaths = { "Grass", "Water", "Test" };
+        static string[] uiPaths = { "Button", "Fade", "Selector" };
 
         static TextureManager()
         {

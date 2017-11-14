@@ -74,6 +74,22 @@ namespace StrategyGame
         }
     }
 
+    public class ButtonEnterScenarios : Button
+    {
+        new static string text = "Scenarios";
+        public ButtonEnterScenarios(Point position, Texture2D texture) : base(position, texture, text)
+        {
+        }
+        public ButtonEnterScenarios() : base(text)
+        {
+        }
+
+        public override void Action()
+        {
+            Game.ChangeScreen(Screen.Scenarios);
+        }
+    }
+
     public class ButtonEnterMainMenu : Button
     {
         new static string text = "Main Menu";
@@ -134,7 +150,8 @@ namespace StrategyGame
 
         public override void Action()
         {
-            Game.map.SaveMap("savetest");
+            MapEditor.IsSaving = true;
+            KeyboardExtension.StartReadingInput();
         }
     }
 
@@ -144,10 +161,14 @@ namespace StrategyGame
         public ButtonMapEditorLoadMap(Point position, Texture2D texture) : base(position, texture, text)
         {
         }
+        public ButtonMapEditorLoadMap() : base(text)
+        {
+        }
 
         public override void Action()
         {
-            throw new System.NotImplementedException();
+            MapEditor.IsLoading = true;
+            KeyboardExtension.StartReadingInput();
         }
     }
 }

@@ -7,7 +7,8 @@ namespace StrategyGame
     public enum Screen
     {
         MainMenu,
-        MapEditor
+        MapEditor,
+        Scenarios
     }
 
     public class Game : Microsoft.Xna.Framework.Game
@@ -111,7 +112,7 @@ namespace StrategyGame
             switch (newScreen)
             {
                 case Screen.MapEditor:
-                    map.LoadMap("test");
+                    map.LoadMap("savetest");
                     break;
                 case Screen.MainMenu:
                     Game.PauseMenu = false;

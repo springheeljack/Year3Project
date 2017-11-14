@@ -5,7 +5,7 @@ namespace StrategyGame
 {
     public static class MainMenu
     {
-        static readonly int numOfButtons = 2;
+        static readonly int numOfButtons = 3;
         static Button[] buttons = new Button[numOfButtons];
         static Point position = new Point(100, 100);
         static int buttonYOffset = 100;
@@ -18,8 +18,9 @@ namespace StrategyGame
 
         public static void Initialize()
         {
-            buttons[0] = new ButtonEnterMapEditor();
-            buttons[1] = new ButtonQuit();
+            buttons[0] = new ButtonEnterScenarios();
+            buttons[1] = new ButtonEnterMapEditor();
+            buttons[2] = new ButtonQuit();
 
             for (int i = 0; i < numOfButtons; i++)
             {

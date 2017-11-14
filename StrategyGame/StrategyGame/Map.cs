@@ -11,7 +11,8 @@ namespace StrategyGame
         public int Height { get { return height; } }
 
         public bool LoadMap(string filePath)
-        {
+        {   if (!System.IO.File.Exists("Content/Map/" + filePath + ".sgmap"))
+                return false;
             string[] read;
             read = System.IO.File.ReadAllLines("Content/Map/" + filePath + ".sgmap");
             width = int.Parse(read[0]);

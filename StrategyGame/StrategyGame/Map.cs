@@ -12,7 +12,7 @@ namespace StrategyGame
 
         public bool LoadMap(string filePath)
         {   if (!System.IO.File.Exists("Content/Map/" + filePath + ".sgmap"))
-                return false;
+                throw new System.Exception("Could not find default map.");
             string[] read;
             read = System.IO.File.ReadAllLines("Content/Map/" + filePath + ".sgmap");
             width = int.Parse(read[0]);

@@ -8,7 +8,7 @@ namespace StrategyGame
     {
         MainMenu,
         MapEditor,
-        Scenarios
+        Play
     }
 
     public class Game : Microsoft.Xna.Framework.Game
@@ -77,6 +77,9 @@ namespace StrategyGame
                 case Screen.MapEditor:
                     MapEditor.Update();
                     break;
+                case Screen.Play:
+                    Play.Update();
+                    break;
             }
 
             if (Quit)
@@ -99,6 +102,9 @@ namespace StrategyGame
                 case Screen.MapEditor:
                     MapEditor.Draw(spriteBatch);
                     break;
+                case Screen.Play:
+                    Play.Draw(spriteBatch);
+                    break;
             }
 
             spriteBatch.End();
@@ -112,7 +118,7 @@ namespace StrategyGame
             switch (newScreen)
             {
                 case Screen.MapEditor:
-                    map.LoadMap("savetest");
+                    map.LoadMap("test");
                     break;
                 case Screen.MainMenu:
                     Game.PauseMenu = false;

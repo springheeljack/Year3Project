@@ -19,6 +19,12 @@ namespace StrategyGame
         {
             this.text = text;
         }
+        public Button(Point position, string text)
+        {
+            this.text = text;
+            texture = TextureManager.UITextures["Button"];
+            rectangle = new Rectangle(position, texture.Bounds.Size);
+        }
 
         public abstract void Action();
 
@@ -74,19 +80,19 @@ namespace StrategyGame
         }
     }
 
-    public class ButtonEnterScenarios : Button
+    public class ButtonEnterPlay : Button
     {
-        new static string text = "Scenarios";
-        public ButtonEnterScenarios(Point position, Texture2D texture) : base(position, texture, text)
+        new static string text = "Play";
+        public ButtonEnterPlay(Point position, Texture2D texture) : base(position, texture, text)
         {
         }
-        public ButtonEnterScenarios() : base(text)
+        public ButtonEnterPlay() : base(text)
         {
         }
 
         public override void Action()
         {
-            Game.ChangeScreen(Screen.Scenarios);
+            Game.ChangeScreen(Screen.Play);
         }
     }
 
@@ -97,6 +103,9 @@ namespace StrategyGame
         {
         }
         public ButtonEnterMainMenu() : base(text)
+        {
+        }
+        public ButtonEnterMainMenu(Point position) : base(position, text)
         {
         }
 
@@ -169,6 +178,26 @@ namespace StrategyGame
         {
             MapEditor.IsLoading = true;
             KeyboardExtension.StartReadingInput();
+        }
+    }
+
+    public class ButtonPlayLoadMap : Button
+    {
+        new static string text = "Load Map";
+        public ButtonPlayLoadMap(Point position, Texture2D texture) : base(position, texture, text)
+        {
+        }
+        public ButtonPlayLoadMap() : base(text)
+        {
+        }
+        public ButtonPlayLoadMap(Point position) : base(position, text)
+        {
+        }
+
+        public override void Action()
+        {
+            Game.map.LoadMap(Play.MapList.SelectedString);
+            Play.ChangeScreen(PlayScreen.Game);
         }
     }
 }

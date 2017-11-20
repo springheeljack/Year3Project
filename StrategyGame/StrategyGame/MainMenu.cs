@@ -18,7 +18,7 @@ namespace StrategyGame
 
         public static void Initialize()
         {
-            buttons[0] = new ButtonEnterScenarios();
+            buttons[0] = new ButtonEnterPlay();
             buttons[1] = new ButtonEnterMapEditor();
             buttons[2] = new ButtonQuit();
 

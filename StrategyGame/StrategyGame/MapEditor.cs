@@ -19,6 +19,7 @@ namespace StrategyGame
         static Rectangle selectorRectangle = new Rectangle(tileSelectorPosition, new Point(Game.GameScale * Game.TileSize));
         static Rectangle mapArea = new Rectangle(0, 0, Game.map.Width * Game.GameScale * Game.TileSize, Game.map.Height * Game.GameScale * Game.TileSize);
         static bool isSaving = false;
+        static bool isPaused = false;
         public static bool IsSaving
         {
             set { isSaving = value; }
@@ -51,15 +52,19 @@ namespace StrategyGame
 
         public static void Update()
         {
-            if (!isSaving && !isLoading)
-                Game.PauseMenuSwitch();
-            else if (KeyboardExtension.IsKeyHit(Keys.Escape))
+            if (KeyboardExtension.IsKeyHit(Keys.Escape))
             {
-                isLoading = false;
-                isSaving = false;
-                KeyboardExtension.StartReadingInput();
+                if (!isSaving && !isLoading)
+                    isPaused = !isPaused;
+                else
+                {
+                    isLoading = false;
+                    isSaving = false;
+                    KeyboardExtension.StopReadingInput();
+                }
             }
-            if (Game.PauseMenu)
+
+            if (isPaused)
             {
                 if (isSaving)
                 {
@@ -105,7 +110,7 @@ namespace StrategyGame
             spriteBatch.Draw(TextureManager.UITextures["Selector"], selectorRectangle, Color.White);
 
 
-            if (Game.PauseMenu)
+            if (isPaused)
             {
                 spriteBatch.Draw(TextureManager.UITextures["Fade"], Game.FadeRectangle, Color.White);
                 foreach (Button b in pauseMenuButtons)

@@ -21,10 +21,11 @@ namespace StrategyGame
         public static readonly Point WindowPosition = new Point(200);
         public static readonly Rectangle FadeRectangle = new Rectangle(0, 0, WindowWidth, WindowHeight);
 
+        
+
         static Screen screen = Screen.MainMenu;
 
         public static bool Quit = false;
-        public static bool PauseMenu = false;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -120,16 +121,7 @@ namespace StrategyGame
                 case Screen.MapEditor:
                     map.LoadMap("test");
                     break;
-                case Screen.MainMenu:
-                    Game.PauseMenu = false;
-                    break;
             }
-        }
-
-        public static void PauseMenuSwitch()
-        {
-            if (KeyboardExtension.IsKeyHit(Keys.Escape))
-                PauseMenu = !PauseMenu;
         }
     }
 }

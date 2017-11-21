@@ -41,6 +41,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Building.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="KeyboardExtension.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="SelectorList.cs" />
     <Compile Include="TextureManager.cs" />
     <Compile Include="Play.cs" />
+    <Compile Include="ISelectable.cs" />
     <Compile Include="Tile.cs" />
   </ItemGroup>
   <ItemGroup>

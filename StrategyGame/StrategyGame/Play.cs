@@ -14,8 +14,10 @@ namespace StrategyGame
     public static class Play
     {
         static List<Button> playButtons = new List<Button>();
+        static List<Building> buildings = new List<Building>();
         public static SelectorList MapList { get; }
         public static PlayScreen Screen { get; set; } = PlayScreen.MapList;
+        static ISelectable Selected = null;
 
         static Play()
         {
@@ -28,6 +30,9 @@ namespace StrategyGame
 
             playButtons.Add(new ButtonPlayLoadMap(new Point(600, 100)));
             playButtons.Add(new ButtonEnterMainMenu(new Point(600, 200)));
+
+            buildings.Add(new BuildingStockpile(new Point(3, 3)));
+            buildings.Add(new BuildingTownCenter(new Point(7, 10)));
         }
 
         public static void Update()
@@ -40,7 +45,11 @@ namespace StrategyGame
                         b.Update();
                     break;
                 case PlayScreen.Game:
-
+                    foreach (Building b in buildings)
+                        b.Update();
+                    foreach (ISelectable s in buildings)
+                        if (MouseExtension.Left == ClickState.Clicked && MouseExtension.Rectangle.Intersects(s.GetDrawingRectangle()))
+                            Selected = s;
                     break;
             }
         }
@@ -56,6 +65,13 @@ namespace StrategyGame
                     break;
                 case PlayScreen.Game:
                     Game.map.Draw(spriteBatch);
+                    foreach (Building b in buildings)
+                        b.Draw(spriteBatch);
+                    if (Selected != null)
+                    {
+                        spriteBatch.Draw(Selected.GetTexture(), new Vector2(100, 640), Color.White);
+                        spriteBatch.DrawString(TextureManager.SpriteFont, Selected.GetName(), new Vector2(0, 640), Color.Black);
+                    }
                     break;
             }
         }

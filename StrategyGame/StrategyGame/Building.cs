@@ -9,9 +9,9 @@ namespace StrategyGame
         Point DrawingPosition { get; }
         Point TileSize { get; }
         Point DrawingSize { get; }
-        Texture2D Texture { get; }
+        public Texture2D Texture { get; }
         public Rectangle DrawingRectangle { get; }
-        string Name { get; }
+        public string Name { get; }
 
         public Building(Point TilePosition,Point TileSize,Texture2D Texture,string Name)
         {
@@ -29,26 +29,11 @@ namespace StrategyGame
         {
             spriteBatch.Draw(Texture, DrawingRectangle, Color.White);
         }
-
-        public Texture2D GetTexture()
-        {
-            return Texture;
-        }
-
-        public string GetName()
-        {
-            return Name;
-        }
-
-        public Rectangle GetDrawingRectangle()
-        {
-            return DrawingRectangle;
-        }
     }
 
     public class BuildingStockpile : Building
     {
-        static string Name = "Stockpile";
+        new static string Name = "Stockpile";
         static Point TileSize = new Point(1);
         public BuildingStockpile(Point TilePosition) : base(TilePosition, TileSize,TextureManager.BuildingTextures[Name],Name)
         {
@@ -62,7 +47,7 @@ namespace StrategyGame
 
     public class BuildingTownCenter : Building
     {
-        static string Name = "Town Center";
+        new static string Name = "Town Center";
         static Point TileSize = new Point(4);
         public BuildingTownCenter(Point TilePosition) : base(TilePosition, TileSize, TextureManager.BuildingTextures[Name], Name)
         {

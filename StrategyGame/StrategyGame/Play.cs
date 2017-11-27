@@ -48,7 +48,7 @@ namespace StrategyGame
                     foreach (Building b in buildings)
                         b.Update();
                     foreach (ISelectable s in buildings)
-                        if (MouseExtension.Left == ClickState.Clicked && MouseExtension.Rectangle.Intersects(s.GetDrawingRectangle()))
+                        if (MouseExtension.Left == ClickState.Clicked && MouseExtension.Rectangle.Intersects(s.DrawingRectangle))
                             Selected = s;
                     break;
             }
@@ -69,8 +69,8 @@ namespace StrategyGame
                         b.Draw(spriteBatch);
                     if (Selected != null)
                     {
-                        spriteBatch.Draw(Selected.GetTexture(), new Vector2(100, 640), Color.White);
-                        spriteBatch.DrawString(TextureManager.SpriteFont, Selected.GetName(), new Vector2(0, 640), Color.Black);
+                        spriteBatch.Draw(Selected.Texture, new Vector2(100, 640), Color.White);
+                        spriteBatch.DrawString(TextureManager.SpriteFont, Selected.Name, new Vector2(0, 640), Color.Black);
                     }
                     break;
             }

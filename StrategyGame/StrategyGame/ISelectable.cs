@@ -5,8 +5,8 @@ namespace StrategyGame
 {
     public interface ISelectable
     {
-        Texture2D GetTexture();
-        string GetName();
-        Rectangle GetDrawingRectangle();
+        string Name { get; }
+        Texture2D Texture { get; }
+        Rectangle DrawingRectangle { get; }
     }
 }

@@ -79,7 +79,7 @@ namespace StrategyGame
                     MapEditor.Update();
                     break;
                 case Screen.Play:
-                    Play.Update();
+                    Play.Update(gameTime);
                     break;
             }
 

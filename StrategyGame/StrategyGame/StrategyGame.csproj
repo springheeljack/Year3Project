@@ -44,6 +44,9 @@
     <Compile Include="Building.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="IAttacker.cs" />
+    <Compile Include="IHealth.cs" />
+    <Compile Include="IRectangleObject.cs" />
     <Compile Include="KeyboardExtension.cs" />
     <Compile Include="MainMenu.cs" />
     <Compile Include="Map.cs" />

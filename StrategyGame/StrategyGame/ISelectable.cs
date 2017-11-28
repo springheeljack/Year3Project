@@ -3,10 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace StrategyGame
 {
-    public interface ISelectable
+    public interface ISelectable:IRectangleObject
     {
         string Name { get; }
-        Texture2D Texture { get; }
-        Rectangle DrawingRectangle { get; }
     }
 }

@@ -1,10 +1,50 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace StrategyGame
 {
+    //public interface IBuildingBase
+    //{
+    //    string Name { get; }
+    //    Point Size { get; }
+    //    int MaxHealth { get; }
+    //    Texture2D Texture { get; }
+    //}
+
+    //public static class StockpileBuildingBase : IBuildingBase, IHasRecipes
+    //{
+    //    public static string Name = "Stockpile";
+    //    public static Point Size = new Point(1);
+    //    public static int MaxHealth = 100;
+    //    public static Texture2D Texture = TextureManager.BuildingTextures[Name];
+    //    public static List<Recipe> Recipes { get; set; }
+
+    //    public StockpileBuildingBase(string Name, Point Size, int MaxHealth, int AttackDamage, float AttackSpeed, float Speed)
+    //    {
+    //        this.Name = Name;
+    //        this.Size = Size;
+    //        this.MaxHealth = MaxHealth;
+    //        Texture = TextureManager.BuildingTextures[Name];
+
+    //        Recipes.Add(new RecipeSpawn(UnitBases.Melee["Creep"]));
+    //    }
+    //}
+
+    public interface IResourceDeposit
+    {
+        void Deposit(IGatherer Gatherer);
+    }
+
     public abstract class Building : IHealth
     {
+
+        public static void InitializeRecipes()
+        {
+            BuildingTownCenter.Recipes.Add(SpawnRecipe.UnitRecipes["Creep"]);
+            BuildingTownCenter.Recipes.Add(SpawnRecipe.UnitRecipes["Miner"]);
+        }
+
         //Point TilePosition { get; }
         //Point DrawingPosition { get; }
         //Point TileSize { get; }
@@ -15,14 +55,16 @@ namespace StrategyGame
         public int Health { get; set; }
         public int MaxHealth { get; }
         public IAttacker LastAttacker { get; set; }
+        //public IBuildingBase Base { get; }
 
-        public Building(Point TilePosition,Point TileSize,Texture2D Texture,string Name,int MaxHealth)
+        public Building(Point TilePosition, Point TileSize, Texture2D Texture, string Name, int MaxHealth)
         {
             //this.TilePosition = TilePosition;
             //DrawingPosition = new Point(TilePosition.X * Game.TileSizeScaled, TilePosition.Y * Game.TileSizeScaled);
             //this.TileSize = TileSize;
             //DrawingSize = new Point(TileSize.X * Game.TileSizeScaled, TileSize.Y * Game.TileSizeScaled);
             //Rectangle = new Rectangle(DrawingPosition, DrawingSize);
+
             Rectangle = new Rectangle(
                 new Point(TilePosition.X * Game.TileSizeScaled, TilePosition.Y * Game.TileSizeScaled),
                 new Point(TileSize.X * Game.TileSizeScaled, TileSize.Y * Game.TileSizeScaled)
@@ -33,7 +75,7 @@ namespace StrategyGame
             Health = MaxHealth;
         }
 
-        public abstract void Update();
+        public abstract void Update(GameTime gameTime);
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, Rectangle, Color.White);
@@ -41,38 +83,54 @@ namespace StrategyGame
 
         void IHealth.Damage(IAttacker Attacker)
         {
-            Health -= Attacker.AttackDamage;
+            Health -= Attacker.UnitBase.AttackDamage;
             LastAttacker = Attacker;
         }
     }
 
-    public class BuildingStockpile : Building
+    public class BuildingStockpile : Building, IHasSpawnRecipe, IResourceDeposit
     {
+        public static List<SpawnRecipe> Recipes { get; set; } = new List<SpawnRecipe>();
         new static string Name = "Stockpile";
         new static int MaxHealth = 100;
         static Point TileSize = new Point(1);
-        public BuildingStockpile(Point TilePosition) : base(TilePosition, TileSize,TextureManager.BuildingTextures[Name],Name,MaxHealth)
+        //static StockpileBuildingBase Base = 
+        public BuildingStockpile(Point TilePosition) : base(TilePosition, TileSize, TextureManager.BuildingTextures[Name], Name, MaxHealth)
         {
         }
 
-        public override void Update()
+        public override void Update(GameTime gameTime)
         {
             //throw new System.NotImplementedException();
+        }
+
+        public List<SpawnRecipe> GetSpawnRecipes()
+        {
+            return Recipes;
+        }
+        public void Deposit(IGatherer Gatherer)
+        {
+            ///////////////////////////////////////////TODO deposit functionality, think about how to get stockpile and town center to be deposits with 1 function
         }
     }
 
-    public class BuildingTownCenter : Building
+    public class BuildingTownCenter : Building, IHasSpawnRecipe
     {
+        public static List<SpawnRecipe> Recipes { get; set; } = new List<SpawnRecipe>();
         new static string Name = "Town Center";
         new static int MaxHealth = 1000;
         static Point TileSize = new Point(4);
-        public BuildingTownCenter(Point TilePosition) : base(TilePosition, TileSize, TextureManager.BuildingTextures[Name], Name,MaxHealth)
+        public BuildingTownCenter(Point TilePosition) : base(TilePosition, TileSize, TextureManager.BuildingTextures[Name], Name, MaxHealth)
         {
         }
 
-        public override void Update()
+        public override void Update(GameTime gameTime)
         {
-            //throw new System.NotImplementedException();
+        }
+
+        public List<SpawnRecipe> GetSpawnRecipes()
+        {
+            return Recipes;
         }
     }
 }

@@ -54,6 +54,11 @@ namespace StrategyGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             TextureManager.LoadContent(Content);
+
+            Unit.Initialize();
+            ResourceNode.Initialize();
+            SpawnRecipe.Initialize();
+            Building.InitializeRecipes();
         }
 
         protected override void UnloadContent()

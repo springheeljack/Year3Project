@@ -14,11 +14,13 @@ namespace StrategyGame
 
     public static class Play
     {
-        static List<Button> playButtons = new List<Button>();
-        static List<Building> buildings = new List<Building>();
-        static List<Building> buildingsToRemove = new List<Building>();
-        static List<Unit> units = new List<Unit>();
-        static List<Unit> unitsToRemove = new List<Unit>();
+        static List<Button> PlayButtons = new List<Button>();
+        public static List<Building> Buildings = new List<Building>();
+        static List<Building> BuildingsToRemove = new List<Building>();
+        public static List<Unit> Units = new List<Unit>();
+        static List<Unit> UnitsToRemove = new List<Unit>();
+        public static List<ResourceNode> ResourceNodes = new List<ResourceNode>();
+        static List<ResourceNode> ResourceNodesToRemove = new List<ResourceNode>();
         public static SelectorList MapList { get; }
         public static PlayScreen Screen { get; set; } = PlayScreen.MapList;
         static ISelectable Selected = null;
@@ -32,15 +34,16 @@ namespace StrategyGame
                 fileNames.Add(Path.GetFileNameWithoutExtension(fi.Name));
             MapList = new SelectorList(fileNames, new Point(100, 100));
 
-            playButtons.Add(new ButtonPlayLoadMap(new Point(600, 100)));
-            playButtons.Add(new ButtonEnterMainMenu(new Point(600, 200)));
+            PlayButtons.Add(new ButtonPlayLoadMap(new Point(600, 100)));
+            PlayButtons.Add(new ButtonEnterMainMenu(new Point(600, 200)));
 
-            buildings.Add(new BuildingStockpile(new Point(3, 3)));
-            buildings.Add(new BuildingTownCenter(new Point(7, 10)));
+            Buildings.Add(new BuildingStockpile(new Point(3, 3)));
+            Buildings.Add(new BuildingTownCenter(new Point(7, 10)));
 
-            units.Add(new UnitCreep(new Vector2(100, 100)));
+            Units.Add(new UnitMelee(new Vector2(100), MeleeUnitBase.BaseDict["Creep"]));
+            Units.Add(new UnitMelee(new Vector2(200), MeleeUnitBase.BaseDict["Creep"]));
 
-            units.Add(new UnitCreep(new Vector2(200, 200)));
+            ResourceNodes.Add(new ResourceNode(new Point(300), ResourceNodeBase.BaseDict["Iron Rock"]));
         }
 
         public static void Update(GameTime gameTime)
@@ -49,66 +52,97 @@ namespace StrategyGame
             {
                 case PlayScreen.MapList:
                     MapList.Update();
-                    foreach (Button b in playButtons)
+                    foreach (Button b in PlayButtons)
                         b.Update();
                     break;
 
                 case PlayScreen.Game:
                     //Buildings
-                    foreach (Building b in buildings)
+                    foreach (Building b in Buildings)
                     {
-                        b.Update();
+                        b.Update(gameTime);
                         if (b.Health <= 0)
-                            buildingsToRemove.Add(b);
+                            BuildingsToRemove.Add(b);
                     }
-                    foreach (Building b in buildingsToRemove)
-                        buildings.Remove(b);
-                    buildingsToRemove.Clear();
+                    foreach (Building b in BuildingsToRemove)
+                        Buildings.Remove(b);
+                    BuildingsToRemove.Clear();
 
                     //Units
-                    foreach (Unit u in units)
+                    foreach (Unit u in Units)
                     {
                         u.Update(gameTime);
                         if (u.Health <= 0)
-                            unitsToRemove.Add(u);
+                            UnitsToRemove.Add(u);
                     }
-                    foreach (Unit u in unitsToRemove)
-                        units.Remove(u);
-                    unitsToRemove.Clear();
+                    foreach (Unit u in UnitsToRemove)
+                        Units.Remove(u);
+                    UnitsToRemove.Clear();
 
 
                     //Mouse
                     if (MouseExtension.Left == ClickState.Clicked)
                     {
-                        foreach (ISelectable s in buildings)
+                        foreach (ISelectable s in Buildings)
                             if (MouseExtension.Rectangle.Intersects(s.Rectangle))
                                 Selected = s;
-                        foreach (ISelectable s in units)
+                        foreach (ISelectable s in Units)
                             if (MouseExtension.Rectangle.Intersects(s.Rectangle))
                                 Selected = s;
+                        foreach (ISelectable s in ResourceNodes)
+                            if (MouseExtension.Rectangle.Intersects(s.Rectangle))
+                                Selected = s;
+                        if (Selected is IHasSpawnRecipe)
+                        {
+                            IHasSpawnRecipe isr = Selected as IHasSpawnRecipe;
+                            var recipes = isr.GetSpawnRecipes();
+                            for (int i = 0; i < recipes.Count; i++)
+                            {
+                                Rectangle rect = new Rectangle(new Point(500 + (i / 2)*32, 640 + (i % 2)*32), recipes[i].RecipeOutput.Texture.Bounds.Size);
+                                if (MouseExtension.Rectangle.Intersects(rect))
+                                    recipes[i].Output(Selected.Rectangle.Center.ToVector2());
+                            }
+                        }
                     }
                     if (MouseExtension.Right == ClickState.Clicked)
                     {
-                        if (Selected != null && Selected is Unit)
+                        if (Selected != null)
                         {
-                            if (Selected is IAttacker)
+                            if (Selected is Unit)
                             {
-                                IAttacker ia = Selected as IAttacker;
-                                ia.AttackTarget = null;
-                                (ia as Unit).HasDestination = false;
-                                foreach (IHealth ih in buildings)
-                                    if (MouseExtension.Rectangle.Intersects(ih.Rectangle))
-                                        ia.AttackTarget = ih;
-                                foreach (IHealth ih in units)
-                                    if (MouseExtension.Rectangle.Intersects(ih.Rectangle))
-                                        ia.AttackTarget = ih;
-                                if (ia.AttackTarget == ia)
+                                if (Selected is IAttacker)
+                                {
+                                    IAttacker ia = Selected as IAttacker;
                                     ia.AttackTarget = null;
-                            }
-                            if (!(Selected is IAttacker) || (Selected is IAttacker) && (Selected as IAttacker).AttackTarget == null)
-                            {
-                                Unit u = Selected as Unit;
-                                u.SetDestination(Mouse.GetState().Position.ToVector2());
+                                    (ia as Unit).HasDestination = false;
+                                    foreach (IHealth ih in Buildings)
+                                        if (MouseExtension.Rectangle.Intersects(ih.Rectangle))
+                                            ia.AttackTarget = ih;
+                                    foreach (IHealth ih in Units)
+                                        if (MouseExtension.Rectangle.Intersects(ih.Rectangle))
+                                            ia.AttackTarget = ih;
+                                    if (ia.AttackTarget == ia)
+                                        ia.AttackTarget = null;
+                                }
+                                if (Selected is IGatherer)
+                                {
+                                    var v = Selected as IGatherer;
+                                    v.GatherTarget = null;
+                                    (v as Unit).HasDestination = false;
+                                    if (v.CarriedResources < v.UnitBase.MaxCapacity)
+                                    {
+                                        foreach (ResourceNode r in ResourceNodes)
+                                            if (MouseExtension.Rectangle.Intersects(r.Rectangle))
+                                                v.GatherTarget = r;
+                                    }
+                                }
+                                if (!(Selected is IAttacker || Selected is IGatherer)
+                                    || (Selected is IAttacker) && (Selected as IAttacker).AttackTarget == null
+                                    || (Selected is IGatherer) && (Selected as IGatherer).GatherTarget == null)
+                                {
+                                    Unit u = Selected as Unit;
+                                    u.SetDestination(Mouse.GetState().Position.ToVector2());
+                                }
                             }
                         }
                     }
@@ -122,14 +156,16 @@ namespace StrategyGame
             {
                 case PlayScreen.MapList:
                     MapList.Draw(spriteBatch);
-                    foreach (Button b in playButtons)
+                    foreach (Button b in PlayButtons)
                         b.Draw(spriteBatch);
                     break;
                 case PlayScreen.Game:
                     Game.map.Draw(spriteBatch);
-                    foreach (Building b in buildings)
+                    foreach (Building b in Buildings)
                         b.Draw(spriteBatch);
-                    foreach (Unit u in units)
+                    foreach (ResourceNode r in ResourceNodes)
+                        r.Draw(spriteBatch);
+                    foreach (Unit u in Units)
                         u.Draw(spriteBatch);
                     if (Selected != null)
                     {
@@ -137,8 +173,6 @@ namespace StrategyGame
                         spriteBatch.DrawString(TextureManager.SpriteFont, Selected.Name, new Vector2(100, 640), Color.Black);
                         if (Selected is Unit && (Selected as Unit).HasDestination)
                             (Selected as Unit).DrawDestinationFlag(spriteBatch);
-                        if (Selected is IAttacker && (Selected as IAttacker).AttackTarget != null)
-                            (Selected as IAttacker).DrawAttackReticle(spriteBatch);
                         if (Selected is IHealth)
                         {
                             IHealth ih = Selected as IHealth;
@@ -148,8 +182,31 @@ namespace StrategyGame
                         if (Selected is IAttacker)
                         {
                             IAttacker ia = Selected as IAttacker;
-                            spriteBatch.DrawString(TextureManager.SpriteFont, "Damage: " + ia.AttackDamage, new Vector2(200, 640), Color.Black);
-                            spriteBatch.DrawString(TextureManager.SpriteFont, "Speed: " + ia.AttackSpeed, new Vector2(200, 680), Color.Black);
+                            spriteBatch.DrawString(TextureManager.SpriteFont, "Damage: " + ia.UnitBase.AttackDamage, new Vector2(200, 640), Color.Black);
+                            spriteBatch.DrawString(TextureManager.SpriteFont, "Speed: " + ia.UnitBase.AttackSpeed, new Vector2(200, 680), Color.Black);
+                            if (ia.AttackTarget != null)
+                                ia.DrawAttackReticle(spriteBatch);
+                        }
+                        if (Selected is IHasSpawnRecipe)
+                        {
+                            IHasSpawnRecipe isr = Selected as IHasSpawnRecipe;
+                            var recipes = isr.GetSpawnRecipes();
+                            for (int i = 0; i < recipes.Count;i++)
+                            {
+                                spriteBatch.Draw(recipes[i].RecipeOutput.Texture, new Vector2(500 + (i / 2)*32, 640 + (i % 2)*32), Color.White);
+                            }
+                        }
+                        if (Selected is ResourceNode)
+                        {
+                            var v = Selected as ResourceNode;
+                            spriteBatch.DrawString(TextureManager.SpriteFont, "Resources left: " + v.Resources.ToString(), new Vector2(500, 640), Color.Black);
+                        }
+                        if (Selected is IGatherer)
+                        {
+                            var v = Selected as IGatherer;
+                            spriteBatch.DrawString(TextureManager.SpriteFont, "Carrying: " + v.CarriedResources.ToString() + " / " + v.UnitBase.MaxCapacity.ToString(), new Vector2(500, 640), Color.Black);
+                            if (v.GatherTarget != null)
+                                v.DrawGatherReticle(spriteBatch);
                         }
                     }
                     break;

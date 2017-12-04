@@ -24,6 +24,7 @@ namespace StrategyGame
         public static SelectorList MapList { get; }
         public static PlayScreen Screen { get; set; } = PlayScreen.MapList;
         static ISelectable Selected = null;
+        public static int Resources = 0;
 
         static Play()
         {
@@ -37,13 +38,16 @@ namespace StrategyGame
             PlayButtons.Add(new ButtonPlayLoadMap(new Point(600, 100)));
             PlayButtons.Add(new ButtonEnterMainMenu(new Point(600, 200)));
 
-            Buildings.Add(new BuildingStockpile(new Point(3, 3)));
+            //Buildings.Add(new BuildingStockpile(new Point(3, 3)));
             Buildings.Add(new BuildingTownCenter(new Point(7, 10)));
 
-            Units.Add(new UnitMelee(new Vector2(100), MeleeUnitBase.BaseDict["Creep"]));
-            Units.Add(new UnitMelee(new Vector2(200), MeleeUnitBase.BaseDict["Creep"]));
+            //Units.Add(new UnitMelee(new Vector2(100), MeleeUnitBase.BaseDict["Creep"]));
+            //Units.Add(new UnitMelee(new Vector2(200), MeleeUnitBase.BaseDict["Creep"]));
+            Units.Add(new UnitMiner(new Vector2(70, 100), GathererUnitBase.BaseDict["Miner"]));
+            Units.Add(new UnitMiner(new Vector2(100, 100), GathererUnitBase.BaseDict["Miner"]));
+            Units.Add(new UnitMiner(new Vector2(130, 100), GathererUnitBase.BaseDict["Miner"]));
 
-            ResourceNodes.Add(new ResourceNode(new Point(300), ResourceNodeBase.BaseDict["Iron Rock"]));
+            ResourceNodes.Add(new ResourceNode(new Point(400), ResourceNodeBase.BaseDict["Iron Rock"]));
         }
 
         public static void Update(GameTime gameTime)
@@ -79,6 +83,16 @@ namespace StrategyGame
                         Units.Remove(u);
                     UnitsToRemove.Clear();
 
+                    //Resource Nodes
+                    foreach (ResourceNode r in ResourceNodes)
+                    {
+                        if (!r.Gatherable)
+                            ResourceNodesToRemove.Add(r);
+                    }
+                    foreach (ResourceNode r in ResourceNodesToRemove)
+                        ResourceNodes.Remove(r);
+                    ResourceNodesToRemove.Clear();
+
 
                     //Mouse
                     if (MouseExtension.Left == ClickState.Clicked)
@@ -86,10 +100,10 @@ namespace StrategyGame
                         foreach (ISelectable s in Buildings)
                             if (MouseExtension.Rectangle.Intersects(s.Rectangle))
                                 Selected = s;
-                        foreach (ISelectable s in Units)
+                        foreach (ISelectable s in ResourceNodes)
                             if (MouseExtension.Rectangle.Intersects(s.Rectangle))
                                 Selected = s;
-                        foreach (ISelectable s in ResourceNodes)
+                        foreach (ISelectable s in Units)
                             if (MouseExtension.Rectangle.Intersects(s.Rectangle))
                                 Selected = s;
                         if (Selected is IHasSpawnRecipe)
@@ -98,9 +112,12 @@ namespace StrategyGame
                             var recipes = isr.GetSpawnRecipes();
                             for (int i = 0; i < recipes.Count; i++)
                             {
-                                Rectangle rect = new Rectangle(new Point(500 + (i / 2)*32, 640 + (i % 2)*32), recipes[i].RecipeOutput.Texture.Bounds.Size);
+                                Rectangle rect = new Rectangle(new Point(500 + (i / 2) * 40, 645 + (i % 2) * 40), recipes[i].RecipeOutput.Texture.Bounds.Size);
+                                rect.Width *= Game.GameScale;
+                                rect.Height *= Game.GameScale;
                                 if (MouseExtension.Rectangle.Intersects(rect))
-                                    recipes[i].Output(Selected.Rectangle.Center.ToVector2());
+                                    if (Resources >= recipes[i].Cost)
+                                        recipes[i].Output(Selected.Rectangle.Center.ToVector2());
                             }
                         }
                     }
@@ -124,24 +141,38 @@ namespace StrategyGame
                                     if (ia.AttackTarget == ia)
                                         ia.AttackTarget = null;
                                 }
+                                if (!(Selected is IAttacker)
+                                    || (Selected is IAttacker) && (Selected as IAttacker).AttackTarget == null)
+                                {
+                                    Unit u = Selected as Unit;
+                                    u.SetDestination(Mouse.GetState().Position.ToVector2());
+                                }
                                 if (Selected is IGatherer)
                                 {
                                     var v = Selected as IGatherer;
-                                    v.GatherTarget = null;
-                                    (v as Unit).HasDestination = false;
+                                    //v.GatherTarget = null;
+                                    //v.DepositTarget = null;
                                     if (v.CarriedResources < v.UnitBase.MaxCapacity)
                                     {
                                         foreach (ResourceNode r in ResourceNodes)
                                             if (MouseExtension.Rectangle.Intersects(r.Rectangle))
+                                            {
                                                 v.GatherTarget = r;
+                                                (v as Unit).HasDestination = false;
+                                            }
                                     }
-                                }
-                                if (!(Selected is IAttacker || Selected is IGatherer)
-                                    || (Selected is IAttacker) && (Selected as IAttacker).AttackTarget == null
-                                    || (Selected is IGatherer) && (Selected as IGatherer).GatherTarget == null)
-                                {
-                                    Unit u = Selected as Unit;
-                                    u.SetDestination(Mouse.GetState().Position.ToVector2());
+                                    foreach (IResourceDeposit ird in Buildings)
+                                        if (MouseExtension.Rectangle.Intersects(ird.Rectangle))
+                                        {
+                                            v.DepositTarget = ird;
+                                            (v as Unit).HasDestination = false;
+                                        }
+                                    if ((v as Unit).HasDestination == true)
+                                    {
+                                        (v as IGatherer).DepositTarget = null;
+                                        (v as IGatherer).GatherTarget = null;
+                                        (v as IGatherer).CurrentTarget = null;
+                                    }
                                 }
                             }
                         }
@@ -191,9 +222,25 @@ namespace StrategyGame
                         {
                             IHasSpawnRecipe isr = Selected as IHasSpawnRecipe;
                             var recipes = isr.GetSpawnRecipes();
-                            for (int i = 0; i < recipes.Count;i++)
+                            for (int i = 0; i < recipes.Count; i++)
                             {
-                                spriteBatch.Draw(recipes[i].RecipeOutput.Texture, new Vector2(500 + (i / 2)*32, 640 + (i % 2)*32), Color.White);
+                                Rectangle rectangle = new Rectangle(new Point(500 + (i / 2) * 40, 645 + (i % 2) * 40), recipes[i].RecipeOutput.Texture.Bounds.Size);
+                                rectangle.Width *= Game.GameScale;
+                                rectangle.Height *= Game.GameScale;
+                                spriteBatch.Draw(recipes[i].RecipeOutput.Texture, rectangle, Color.White);
+                                if (MouseExtension.Rectangle.Intersects(rectangle))
+                                {
+                                    float nameLength = TextureManager.SpriteFont.MeasureString(recipes[i].RecipeOutput.Name).X;
+                                    float costLength = TextureManager.SpriteFont.MeasureString(recipes[i].Cost.ToString()).X;
+                                    float length = nameLength > costLength ? nameLength : costLength;
+
+                                    Color c = Resources >= recipes[i].Cost ? Color.Lime : Color.Red;
+
+                                    Rectangle tooltipBackground = new Rectangle(MouseExtension.Rectangle.X - (int)length, MouseExtension.Rectangle.Y - 80, (int)length, 80);
+                                    spriteBatch.Draw(TextureManager.UITextures["Fade"], tooltipBackground, Color.White);
+                                    spriteBatch.DrawString(TextureManager.SpriteFont, recipes[i].RecipeOutput.Name, tooltipBackground.Location.ToVector2(), c);
+                                    spriteBatch.DrawString(TextureManager.SpriteFont, recipes[i].Cost.ToString(), tooltipBackground.Location.ToVector2()+new Vector2(0,40), c);
+                                }
                             }
                         }
                         if (Selected is ResourceNode)
@@ -207,8 +254,11 @@ namespace StrategyGame
                             spriteBatch.DrawString(TextureManager.SpriteFont, "Carrying: " + v.CarriedResources.ToString() + " / " + v.UnitBase.MaxCapacity.ToString(), new Vector2(500, 640), Color.Black);
                             if (v.GatherTarget != null)
                                 v.DrawGatherReticle(spriteBatch);
+                            if (v.DepositTarget != null)
+                                v.DrawDepositReticle(spriteBatch);
                         }
                     }
+                    spriteBatch.DrawString(TextureManager.SpriteFont, "Resources: " + Resources.ToString(), new Vector2(800, 640), Color.Black);
                     break;
             }
         }

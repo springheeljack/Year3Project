@@ -78,17 +78,6 @@ namespace StrategyGame
             GathererUnitBase.Initialize();
         }
 
-        //public Unit(Vector2 Position, Point Size, Texture2D Texture, string Name, int MaxHealth, float Speed)
-        //{
-        //    this.Position = Position;
-        //    this.Size = Size;
-        //    this.Texture = Texture;
-        //    this.Name = Name;
-        //    DrawingSize = new Point(Size.X * Game.GameScale, Size.Y * Game.GameScale);
-        //    this.MaxHealth = MaxHealth;
-        //    Health = MaxHealth;
-        //    this.Speed = Speed;
-        //}
         public Unit(Vector2 Position, UnitBase UnitBase)
         {
             this.UnitBase = UnitBase;
@@ -199,40 +188,65 @@ namespace StrategyGame
         public int CarriedResources { get; set; }
         public float GatherTimer { get; set; }
         public ResourceNode GatherTarget { get; set; } = null;
+        public IResourceDeposit DepositTarget { get; set; } = null;
+        public IRectangleObject CurrentTarget { get; set; } = null;
         public UnitMiner(Vector2 Position, GathererUnitBase UnitBase) : base(Position, UnitBase)
         {
             this.UnitBase = UnitBase;
         }
         public override void Update(GameTime gameTime)
         {
-            if (GatherTarget != null)
+            if (GatherTarget != null && !GatherTarget.Gatherable)
             {
-                if (!GatherTarget.Gatherable)
-                    GatherTarget = null;
-                else
+                GatherTarget = null;
+                CurrentTarget = null;
+            }
+            if (CurrentTarget == null)
+            {
+                if (GatherTarget != null && CarriedResources < UnitBase.MaxCapacity)
+                    CurrentTarget = GatherTarget;
+                else if (DepositTarget != null && CarriedResources > 0)
+                    CurrentTarget = DepositTarget;
+            }
+
+            if (CurrentTarget != null)
+            {
+                Vector2 pos = Position;
+                Vector2 move = CurrentTarget.Rectangle.Center.ToVector2() - pos;
+                float length = move.Length();
+                if (length > UnitBase.Speed)
                 {
-                    Vector2 pos = Position;
-                    Vector2 move = GatherTarget.Rectangle.Center.ToVector2() - pos;
-                    float length = move.Length();
-                    if (length > UnitBase.Speed)
+                    move.Normalize();
+                    move *= UnitBase.Speed;
+                }
+                pos += move;
+                Position = pos;
+                if (length <= 0.1f)
+                {
+                    if (CurrentTarget == DepositTarget)
                     {
-                        move.Normalize();
-                        move *= UnitBase.Speed;
+                        DepositTarget.Deposit(this);
+                        if (GatherTarget != null)
+                            CurrentTarget = GatherTarget;
                     }
-                    pos += move;
-                    Position = pos;
-                    if (length <= 0.1f)
+                    else
                     {
-                        if (GatherTimer <= 0.0f)
+                        if (GatherTimer<=0.0f)
                         {
                             GatherTimer += UnitBase.GatherSpeed;
-                            GatherTarget.Gather(this);
-                            if (CarriedResources >= UnitBase.MaxCapacity)
+                            if (!GatherTarget.Gatherable)
+                            {
                                 GatherTarget = null;
+                                CurrentTarget = DepositTarget;
+                            }
+                            GatherTarget.Gather(this);
+                            if (CarriedResources == UnitBase.MaxCapacity)
+                                CurrentTarget = DepositTarget;
                         }
                     }
                 }
             }
+            
 
             if (GatherTimer > 0.0f)
                 GatherTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -244,22 +258,10 @@ namespace StrategyGame
             Texture2D reticleTexture = TextureManager.UITextures["Reticle"];
             spriteBatch.Draw(reticleTexture, new Rectangle(GatherTarget.Rectangle.Center + TextureManager.ReticleAndFlagOffset, reticleTexture.Bounds.Size), Color.White);
         }
-
-        //public float MiningSpeed { get; }
-        //public int MaxCapacity { get; }
+        public void DrawDepositReticle(SpriteBatch spriteBatch)
+        {
+            Texture2D reticleTexture = TextureManager.UITextures["GreenFlag"];
+            spriteBatch.Draw(reticleTexture, new Rectangle(DepositTarget.Rectangle.Center + TextureManager.ReticleAndFlagOffset, reticleTexture.Bounds.Size), Color.White);
+        }
     }
-
-    //public class UnitCreep : UnitMelee
-    //{
-    //    new static string Name = "Creep";
-    //    static Point Size = new Point(8);
-    //    new static int MaxHealth = 50;
-    //    new static int AttackDamage = 5;
-    //    new static float AttackSpeed = 1.0f;
-    //    new static float Speed = 2.0f;
-
-    //    public UnitCreep(Vector2 Position) : base(Position, Size, TextureManager.UnitTextures[Name], Name, MaxHealth, AttackDamage, AttackSpeed, Speed)
-    //    {
-    //    }
-    //}
 }

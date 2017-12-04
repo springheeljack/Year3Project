@@ -15,6 +15,9 @@ namespace StrategyGame
         int CarriedResources { get; set; }
         float GatherTimer { get; set; }
         ResourceNode GatherTarget { get; set; }
+        IResourceDeposit DepositTarget { get; set; }
+        IRectangleObject CurrentTarget { get; set; }
         void DrawGatherReticle(SpriteBatch spriteBatch);
+        void DrawDepositReticle(SpriteBatch spriteBatch);
     }
 }

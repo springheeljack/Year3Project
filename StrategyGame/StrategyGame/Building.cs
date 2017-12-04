@@ -31,9 +31,18 @@ namespace StrategyGame
     //    }
     //}
 
-    public interface IResourceDeposit
+    public interface IResourceDeposit : IRectangleObject
     {
         void Deposit(IGatherer Gatherer);
+    }
+
+    public static class BuildingExtension
+    {
+        public static void Deposit(this IResourceDeposit resourceDeposit, IGatherer Gatherer)
+        {
+            Play.Resources += Gatherer.CarriedResources;
+            Gatherer.CarriedResources = 0;
+        }
     }
 
     public abstract class Building : IHealth
@@ -110,11 +119,11 @@ namespace StrategyGame
         }
         public void Deposit(IGatherer Gatherer)
         {
-            ///////////////////////////////////////////TODO deposit functionality, think about how to get stockpile and town center to be deposits with 1 function
+            BuildingExtension.Deposit(this, Gatherer);
         }
     }
 
-    public class BuildingTownCenter : Building, IHasSpawnRecipe
+    public class BuildingTownCenter : Building, IHasSpawnRecipe, IResourceDeposit
     {
         public static List<SpawnRecipe> Recipes { get; set; } = new List<SpawnRecipe>();
         new static string Name = "Town Center";
@@ -131,6 +140,10 @@ namespace StrategyGame
         public List<SpawnRecipe> GetSpawnRecipes()
         {
             return Recipes;
+        }
+        public void Deposit(IGatherer Gatherer)
+        {
+            BuildingExtension.Deposit(this,Gatherer);
         }
     }
 }

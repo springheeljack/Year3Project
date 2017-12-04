@@ -16,7 +16,7 @@ namespace StrategyGame
 
         public static string[] buildingPaths = { "Stockpile", "Town Center" };
         public static string[] tilePaths = { "Grass", "Water", "Test" };
-        static string[] uiPaths = { "Button", "Fade", "Selector", "Flag","Reticle" };
+        static string[] uiPaths = { "Button", "Fade", "Selector", "Flag","Reticle","GreenFlag" };
         public static string[] unitPaths = { "Creep","Miner" };
         public static string[] resourceNodePaths = { "Iron Rock", "Tree" };
 

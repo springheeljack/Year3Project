@@ -1,39 +1,35 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace StrategyGame
 {
-    //public interface IBuildingBase
-    //{
-    //    string Name { get; }
-    //    Point Size { get; }
-    //    int MaxHealth { get; }
-    //    Texture2D Texture { get; }
-    //}
-
-    //public static class StockpileBuildingBase : IBuildingBase, IHasRecipes
-    //{
-    //    public static string Name = "Stockpile";
-    //    public static Point Size = new Point(1);
-    //    public static int MaxHealth = 100;
-    //    public static Texture2D Texture = TextureManager.BuildingTextures[Name];
-    //    public static List<Recipe> Recipes { get; set; }
-
-    //    public StockpileBuildingBase(string Name, Point Size, int MaxHealth, int AttackDamage, float AttackSpeed, float Speed)
-    //    {
-    //        this.Name = Name;
-    //        this.Size = Size;
-    //        this.MaxHealth = MaxHealth;
-    //        Texture = TextureManager.BuildingTextures[Name];
-
-    //        Recipes.Add(new RecipeSpawn(UnitBases.Melee["Creep"]));
-    //    }
-    //}
-
     public interface IResourceDeposit : IRectangleObject
     {
         void Deposit(IGatherer Gatherer);
+    }
+
+    public class BuildingBase
+    {
+        public static Dictionary<string, BuildingBase> BaseDict = new Dictionary<string, BuildingBase>();
+        public string Name { get; }
+        public Point Size { get; }
+        public int MaxHealth { get; }
+        public Texture2D Texture { get; }
+        public Type BuildingType { get; }
+        public BuildingBase(Type BuildingType, string Name, Point Size, int MaxHealth)
+        {
+            this.Name = Name;
+            this.Size = Size;
+            this.MaxHealth = MaxHealth;
+            Texture = Art.BuildingTextures[Name];
+        }
+        public static void Initialize()
+        {
+            BaseDict.Add("Town Center", new BuildingBase(typeof(BuildingTownCenter), "Town Center", new Point(128), 1000));
+            BaseDict.Add("Stockpile", new BuildingBase(typeof(BuildingStockpile), "Stockpile", new Point(32), 100));
+        }
     }
 
     public static class BuildingExtension
@@ -50,37 +46,23 @@ namespace StrategyGame
 
         public static void InitializeRecipes()
         {
-            BuildingTownCenter.Recipes.Add(SpawnRecipe.UnitRecipes["Creep"]);
-            BuildingTownCenter.Recipes.Add(SpawnRecipe.UnitRecipes["Miner"]);
+            BuildingTownCenter.Recipes.Add(UnitRecipe.UnitRecipes["Creep"]);
+            BuildingTownCenter.Recipes.Add(UnitRecipe.UnitRecipes["Miner"]);
+            BuildingTownCenter.Recipes.Add(UnitRecipe.UnitRecipes["Builder"]);
         }
 
-        //Point TilePosition { get; }
-        //Point DrawingPosition { get; }
-        //Point TileSize { get; }
-        //Point DrawingSize { get; }
-        public Texture2D Texture { get; }
+        public Texture2D Texture { get { return Base.Texture; } }
         public Rectangle Rectangle { get; }
-        public string Name { get; }
+        public string Name { get { return Base.Name; } }
         public int Health { get; set; }
-        public int MaxHealth { get; }
+        public int MaxHealth { get { return Base.MaxHealth; } }
         public IAttacker LastAttacker { get; set; }
-        //public IBuildingBase Base { get; }
+        public BuildingBase Base { get; }
 
-        public Building(Point TilePosition, Point TileSize, Texture2D Texture, string Name, int MaxHealth)
+        public Building(Point Position, BuildingBase Base)
         {
-            //this.TilePosition = TilePosition;
-            //DrawingPosition = new Point(TilePosition.X * Game.TileSizeScaled, TilePosition.Y * Game.TileSizeScaled);
-            //this.TileSize = TileSize;
-            //DrawingSize = new Point(TileSize.X * Game.TileSizeScaled, TileSize.Y * Game.TileSizeScaled);
-            //Rectangle = new Rectangle(DrawingPosition, DrawingSize);
-
-            Rectangle = new Rectangle(
-                new Point(TilePosition.X * Game.TileSizeScaled, TilePosition.Y * Game.TileSizeScaled),
-                new Point(TileSize.X * Game.TileSizeScaled, TileSize.Y * Game.TileSizeScaled)
-                );
-            this.Texture = Texture;
-            this.Name = Name;
-            this.MaxHealth = MaxHealth;
+            this.Base = Base;
+            Rectangle = new Rectangle(Position, Base.Size);
             Health = MaxHealth;
         }
 
@@ -92,58 +74,48 @@ namespace StrategyGame
 
         void IHealth.Damage(IAttacker Attacker)
         {
-            Health -= Attacker.UnitBase.AttackDamage;
+            Health -= Attacker.Base.AttackDamage;
             LastAttacker = Attacker;
         }
     }
 
-    public class BuildingStockpile : Building, IHasSpawnRecipe, IResourceDeposit
+    public class BuildingStockpile : Building, IResourceDeposit
     {
-        public static List<SpawnRecipe> Recipes { get; set; } = new List<SpawnRecipe>();
-        new static string Name = "Stockpile";
-        new static int MaxHealth = 100;
-        static Point TileSize = new Point(1);
-        //static StockpileBuildingBase Base = 
-        public BuildingStockpile(Point TilePosition) : base(TilePosition, TileSize, TextureManager.BuildingTextures[Name], Name, MaxHealth)
+        public static List<UnitRecipe> Recipes { get; set; } = new List<UnitRecipe>();
+        public BuildingStockpile(Point Position) : base(Position, BuildingBase.BaseDict["Stockpile"])
         {
         }
 
         public override void Update(GameTime gameTime)
         {
-            //throw new System.NotImplementedException();
+
         }
 
-        public List<SpawnRecipe> GetSpawnRecipes()
-        {
-            return Recipes;
-        }
+        //public List<SpawnRecipe> GetSpawnRecipes()
+        //{
+        //    return Recipes;
+        //}
         public void Deposit(IGatherer Gatherer)
         {
             BuildingExtension.Deposit(this, Gatherer);
         }
     }
 
-    public class BuildingTownCenter : Building, IHasSpawnRecipe, IResourceDeposit
+    public class BuildingTownCenter : Building, IHasUnitRecipe, IResourceDeposit
     {
-        public static List<SpawnRecipe> Recipes { get; set; } = new List<SpawnRecipe>();
-        new static string Name = "Town Center";
-        new static int MaxHealth = 1000;
-        static Point TileSize = new Point(4);
-        public BuildingTownCenter(Point TilePosition) : base(TilePosition, TileSize, TextureManager.BuildingTextures[Name], Name, MaxHealth)
+        public static List<UnitRecipe> Recipes = new List<UnitRecipe>();
+        public List<UnitRecipe> GetUnitRecipes() { return Recipes; }
+
+        public BuildingTownCenter(Point Position) : base(Position, BuildingBase.BaseDict["Town Center"])
         {
         }
 
         public override void Update(GameTime gameTime)
         {
         }
-
-        public List<SpawnRecipe> GetSpawnRecipes()
-        {
-            return Recipes;
-        }
         public void Deposit(IGatherer Gatherer)
         {
-            BuildingExtension.Deposit(this,Gatherer);
+            BuildingExtension.Deposit(this, Gatherer);
         }
     }
 }

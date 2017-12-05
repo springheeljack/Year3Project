@@ -24,7 +24,7 @@ namespace StrategyGame
 
             for (int i = 0; i < numOfButtons; i++)
             {
-                buttons[i].Initialize(new Point(position.X, position.Y + i * buttonYOffset), TextureManager.UITextures["Button"]);
+                buttons[i].Initialize(new Point(position.X, position.Y + i * buttonYOffset), Art.UITextures["Button"]);
             }
         }
 

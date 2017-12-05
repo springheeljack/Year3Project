@@ -53,11 +53,12 @@ namespace StrategyGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            TextureManager.LoadContent(Content);
+            Art.LoadContent(Content);
 
-            Unit.Initialize();
-            ResourceNode.Initialize();
-            SpawnRecipe.Initialize();
+            UnitBase.Initialize();
+            BuildingBase.Initialize();
+            ResourceNodeBase.Initialize();
+            UnitRecipe.Initialize();
             Building.InitializeRecipes();
         }
 

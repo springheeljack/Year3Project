@@ -26,7 +26,7 @@ namespace StrategyGame
         {
             for (int i = 0; i < List.Count; i++)
             {
-                Point measuredString = TextureManager.SpriteFont.MeasureString(List[i]).ToPoint();
+                Point measuredString = Art.SpriteFont.MeasureString(List[i]).ToPoint();
                 Rectangle textRectangle = new Rectangle(Position.X, Position.Y + (i * Spacing), measuredString.X, measuredString.Y);
                 if (MouseExtension.Left == ClickState.Clicked && MouseExtension.Rectangle.Intersects(textRectangle))
                 {
@@ -43,7 +43,7 @@ namespace StrategyGame
             for (int i = 0; i < List.Count;i++)
             {
                 Color color = i == SelectedIndex ? Color.LightGray : Color.Black;
-                spriteBatch.DrawString(TextureManager.SpriteFont, List[i], pos, color);
+                spriteBatch.DrawString(Art.SpriteFont, List[i], pos, color);
                 pos.Y += Spacing;
             }
         }

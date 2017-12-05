@@ -9,11 +9,9 @@ namespace StrategyGame
 {
     public interface IGatherer : ISelectable
     {
-        //float MiningSpeed { get; }
-        //int MaxCapacity { get; }
-        GathererUnitBase UnitBase { get; }
+        UnitBaseGatherer Base { get; }
         int CarriedResources { get; set; }
-        float GatherTimer { get; set; }
+        float GatherSpeed { get; set; }
         ResourceNode GatherTarget { get; set; }
         IResourceDeposit DepositTarget { get; set; }
         IRectangleObject CurrentTarget { get; set; }

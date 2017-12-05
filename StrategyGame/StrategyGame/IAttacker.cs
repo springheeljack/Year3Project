@@ -9,9 +9,7 @@ namespace StrategyGame
 {
     public interface IAttacker: ISelectable
     {
-        //int AttackDamage { get; }
-        //float AttackSpeed { get; }
-        MeleeUnitBase UnitBase { get; }
+        UnitBaseMelee Base { get; }
         float AttackTimer { get; }
         IHealth AttackTarget { get; set; }
         void DrawAttackReticle(SpriteBatch spriteBatch);

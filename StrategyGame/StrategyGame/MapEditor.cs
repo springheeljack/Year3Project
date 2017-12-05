@@ -39,14 +39,14 @@ namespace StrategyGame
 
             for (int i = 0; i < numOfPauseMenuButtons; i++)
             {
-                pauseMenuButtons[i].Initialize(new Point(pauseMenuPosition.X, pauseMenuPosition.Y + i * pauseMenuButtonYOffset), TextureManager.UITextures["Button"]);
+                pauseMenuButtons[i].Initialize(new Point(pauseMenuPosition.X, pauseMenuPosition.Y + i * pauseMenuButtonYOffset), Art.UITextures["Button"]);
             }
 
             for (int i = 0; i < numOfTiles;i++)
             {
 
                 tileButtons[i] = new ButtonMapEditorSelectTile(
-                    new Point(tileSelectorPosition.X + (i / 2) * Game.TileSize * Game.GameScale, tileSelectorPosition.Y + (i % 2) * Game.TileSize * Game.GameScale), TextureManager.tilePaths[i],i);
+                    new Point(tileSelectorPosition.X + (i / 2) * Game.TileSize * Game.GameScale, tileSelectorPosition.Y + (i % 2) * Game.TileSize * Game.GameScale), Art.tilePaths[i],i);
             }
         }
 
@@ -107,19 +107,19 @@ namespace StrategyGame
 
             foreach (Button b in tileButtons)
                 b.Draw(spriteBatch);
-            spriteBatch.Draw(TextureManager.UITextures["Selector"], selectorRectangle, Color.White);
+            spriteBatch.Draw(Art.UITextures["Selector"], selectorRectangle, Color.White);
 
 
             if (isPaused)
             {
-                spriteBatch.Draw(TextureManager.UITextures["Fade"], Game.FadeRectangle, Color.White);
+                spriteBatch.Draw(Art.UITextures["Fade"], Game.FadeRectangle, Color.White);
                 foreach (Button b in pauseMenuButtons)
                     b.Draw(spriteBatch);
                 if (KeyboardExtension.IsReadingInput)
                 {
-                    spriteBatch.Draw(TextureManager.UITextures["Fade"], Game.FadeRectangle, Color.White);
-                    spriteBatch.DrawString(TextureManager.SpriteFont, KeyboardExtension.CurrentInput,
-                    TextureManager.CenterString(new Rectangle(saveTextInputPosition, new Point(0)), TextureManager.SpriteFont, KeyboardExtension.CurrentInput), Color.White);
+                    spriteBatch.Draw(Art.UITextures["Fade"], Game.FadeRectangle, Color.White);
+                    spriteBatch.DrawString(Art.SpriteFont, KeyboardExtension.CurrentInput,
+                    Art.CenterString(new Rectangle(saveTextInputPosition, new Point(0)), Art.SpriteFont, KeyboardExtension.CurrentInput), Color.White);
                 }
             }
         }

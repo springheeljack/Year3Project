@@ -24,7 +24,7 @@ namespace StrategyGame
         public static SelectorList MapList { get; }
         public static PlayScreen Screen { get; set; } = PlayScreen.MapList;
         static ISelectable Selected = null;
-        public static int Resources = 0;
+        public static int Resources = 1000;
 
         static Play()
         {
@@ -38,16 +38,14 @@ namespace StrategyGame
             PlayButtons.Add(new ButtonPlayLoadMap(new Point(600, 100)));
             PlayButtons.Add(new ButtonEnterMainMenu(new Point(600, 200)));
 
-            //Buildings.Add(new BuildingStockpile(new Point(3, 3)));
-            Buildings.Add(new BuildingTownCenter(new Point(7, 10)));
+            Buildings.Add(new BuildingTownCenter(new Point(3, 4)));
 
-            //Units.Add(new UnitMelee(new Vector2(100), MeleeUnitBase.BaseDict["Creep"]));
-            //Units.Add(new UnitMelee(new Vector2(200), MeleeUnitBase.BaseDict["Creep"]));
-            Units.Add(new UnitMiner(new Vector2(70, 100), GathererUnitBase.BaseDict["Miner"]));
-            Units.Add(new UnitMiner(new Vector2(100, 100), GathererUnitBase.BaseDict["Miner"]));
-            Units.Add(new UnitMiner(new Vector2(130, 100), GathererUnitBase.BaseDict["Miner"]));
+            Units.Add(new UnitGatherer(new Vector2(70, 100), UnitBaseGatherer.Dictionary["Miner"]));
+            Units.Add(new UnitGatherer(new Vector2(100, 100), UnitBaseGatherer.Dictionary["Miner"]));
+            Units.Add(new UnitGatherer(new Vector2(130, 100), UnitBaseGatherer.Dictionary["Miner"]));
 
-            ResourceNodes.Add(new ResourceNode(new Point(400), ResourceNodeBase.BaseDict["Iron Rock"]));
+            ResourceNodes.Add(new ResourceNode(new Point(400), ResourceNodeBase.Dictionary["Iron Rock"]));
+            ResourceNodes.Add(new ResourceNode(new Point(432), ResourceNodeBase.Dictionary["Iron Rock"]));
         }
 
         public static void Update(GameTime gameTime)
@@ -106,10 +104,10 @@ namespace StrategyGame
                         foreach (ISelectable s in Units)
                             if (MouseExtension.Rectangle.Intersects(s.Rectangle))
                                 Selected = s;
-                        if (Selected is IHasSpawnRecipe)
+                        if (Selected is IHasUnitRecipe)
                         {
-                            IHasSpawnRecipe isr = Selected as IHasSpawnRecipe;
-                            var recipes = isr.GetSpawnRecipes();
+                            IHasUnitRecipe isr = Selected as IHasUnitRecipe;
+                            var recipes = isr.GetUnitRecipes();
                             for (int i = 0; i < recipes.Count; i++)
                             {
                                 Rectangle rect = new Rectangle(new Point(500 + (i / 2) * 40, 645 + (i % 2) * 40), recipes[i].RecipeOutput.Texture.Bounds.Size);
@@ -152,7 +150,7 @@ namespace StrategyGame
                                     var v = Selected as IGatherer;
                                     //v.GatherTarget = null;
                                     //v.DepositTarget = null;
-                                    if (v.CarriedResources < v.UnitBase.MaxCapacity)
+                                    if (v.CarriedResources < v.Base.MaxCapacity)
                                     {
                                         foreach (ResourceNode r in ResourceNodes)
                                             if (MouseExtension.Rectangle.Intersects(r.Rectangle))
@@ -201,27 +199,27 @@ namespace StrategyGame
                     if (Selected != null)
                     {
                         spriteBatch.Draw(Selected.Texture, new Vector2(20, 650), Color.White);
-                        spriteBatch.DrawString(TextureManager.SpriteFont, Selected.Name, new Vector2(100, 640), Color.Black);
+                        spriteBatch.DrawString(Art.SpriteFont, Selected.Name, new Vector2(100, 640), Color.Black);
                         if (Selected is Unit && (Selected as Unit).HasDestination)
                             (Selected as Unit).DrawDestinationFlag(spriteBatch);
                         if (Selected is IHealth)
                         {
                             IHealth ih = Selected as IHealth;
                             string s = ih.Health.ToString() + " / " + ih.MaxHealth.ToString();
-                            spriteBatch.DrawString(TextureManager.SpriteFont, s, new Vector2(100, 680), Color.Black);
+                            spriteBatch.DrawString(Art.SpriteFont, s, new Vector2(100, 680), Color.Black);
                         }
                         if (Selected is IAttacker)
                         {
                             IAttacker ia = Selected as IAttacker;
-                            spriteBatch.DrawString(TextureManager.SpriteFont, "Damage: " + ia.UnitBase.AttackDamage, new Vector2(200, 640), Color.Black);
-                            spriteBatch.DrawString(TextureManager.SpriteFont, "Speed: " + ia.UnitBase.AttackSpeed, new Vector2(200, 680), Color.Black);
+                            spriteBatch.DrawString(Art.SpriteFont, "Damage: " + ia.Base.AttackDamage, new Vector2(200, 640), Color.Black);
+                            spriteBatch.DrawString(Art.SpriteFont, "Speed: " + ia.Base.AttackSpeed, new Vector2(200, 680), Color.Black);
                             if (ia.AttackTarget != null)
                                 ia.DrawAttackReticle(spriteBatch);
                         }
-                        if (Selected is IHasSpawnRecipe)
+                        if (Selected is IHasUnitRecipe)
                         {
-                            IHasSpawnRecipe isr = Selected as IHasSpawnRecipe;
-                            var recipes = isr.GetSpawnRecipes();
+                            IHasUnitRecipe isr = Selected as IHasUnitRecipe;
+                            var recipes = isr.GetUnitRecipes();
                             for (int i = 0; i < recipes.Count; i++)
                             {
                                 Rectangle rectangle = new Rectangle(new Point(500 + (i / 2) * 40, 645 + (i % 2) * 40), recipes[i].RecipeOutput.Texture.Bounds.Size);
@@ -230,35 +228,35 @@ namespace StrategyGame
                                 spriteBatch.Draw(recipes[i].RecipeOutput.Texture, rectangle, Color.White);
                                 if (MouseExtension.Rectangle.Intersects(rectangle))
                                 {
-                                    float nameLength = TextureManager.SpriteFont.MeasureString(recipes[i].RecipeOutput.Name).X;
-                                    float costLength = TextureManager.SpriteFont.MeasureString(recipes[i].Cost.ToString()).X;
+                                    float nameLength = Art.SpriteFont.MeasureString(recipes[i].RecipeOutput.Name).X;
+                                    float costLength = Art.SpriteFont.MeasureString(recipes[i].Cost.ToString()).X;
                                     float length = nameLength > costLength ? nameLength : costLength;
 
                                     Color c = Resources >= recipes[i].Cost ? Color.Lime : Color.Red;
 
                                     Rectangle tooltipBackground = new Rectangle(MouseExtension.Rectangle.X - (int)length, MouseExtension.Rectangle.Y - 80, (int)length, 80);
-                                    spriteBatch.Draw(TextureManager.UITextures["Fade"], tooltipBackground, Color.White);
-                                    spriteBatch.DrawString(TextureManager.SpriteFont, recipes[i].RecipeOutput.Name, tooltipBackground.Location.ToVector2(), c);
-                                    spriteBatch.DrawString(TextureManager.SpriteFont, recipes[i].Cost.ToString(), tooltipBackground.Location.ToVector2()+new Vector2(0,40), c);
+                                    spriteBatch.Draw(Art.UITextures["Fade"], tooltipBackground, Color.White);
+                                    spriteBatch.DrawString(Art.SpriteFont, recipes[i].RecipeOutput.Name, tooltipBackground.Location.ToVector2(), c);
+                                    spriteBatch.DrawString(Art.SpriteFont, recipes[i].Cost.ToString(), tooltipBackground.Location.ToVector2()+new Vector2(0,40), c);
                                 }
                             }
                         }
                         if (Selected is ResourceNode)
                         {
                             var v = Selected as ResourceNode;
-                            spriteBatch.DrawString(TextureManager.SpriteFont, "Resources left: " + v.Resources.ToString(), new Vector2(500, 640), Color.Black);
+                            spriteBatch.DrawString(Art.SpriteFont, "Resources left: " + v.Resources.ToString(), new Vector2(500, 640), Color.Black);
                         }
                         if (Selected is IGatherer)
                         {
                             var v = Selected as IGatherer;
-                            spriteBatch.DrawString(TextureManager.SpriteFont, "Carrying: " + v.CarriedResources.ToString() + " / " + v.UnitBase.MaxCapacity.ToString(), new Vector2(500, 640), Color.Black);
+                            spriteBatch.DrawString(Art.SpriteFont, "Carrying: " + v.CarriedResources.ToString() + " / " + v.Base.MaxCapacity.ToString(), new Vector2(500, 640), Color.Black);
                             if (v.GatherTarget != null)
                                 v.DrawGatherReticle(spriteBatch);
                             if (v.DepositTarget != null)
                                 v.DrawDepositReticle(spriteBatch);
                         }
                     }
-                    spriteBatch.DrawString(TextureManager.SpriteFont, "Resources: " + Resources.ToString(), new Vector2(800, 640), Color.Black);
+                    spriteBatch.DrawString(Art.SpriteFont, "Resources: " + Resources.ToString(), new Vector2(800, 640), Color.Black);
                     break;
             }
         }

@@ -2,30 +2,61 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace StrategyGame
 {
-    public interface IHasSpawnRecipe
+    public interface IHasUnitRecipe
     {
-        List<SpawnRecipe> GetSpawnRecipes();
+        List<UnitRecipe> GetUnitRecipes();
     }
 
-    public class SpawnRecipe
+    public interface IHasBuildRecipe
     {
-        public static Dictionary<string, SpawnRecipe> UnitRecipes = new Dictionary<string, SpawnRecipe>();
+        List<BuildingRecipe> GetBuildingRecipes();
+    }
+
+    public class BuildingRecipe
+    {
+        public static Dictionary<string, BuildingRecipe> BuildingRecipes = new Dictionary<string, BuildingRecipe>();
 
         public static void Initialize()
         {
-            UnitRecipes.Add("Creep", new SpawnRecipe(MeleeUnitBase.BaseDict["Creep"],50));
-            UnitRecipes.Add("Miner", new SpawnRecipe(GathererUnitBase.BaseDict["Miner"],25));
+            BuildingRecipes.Add("Stockpile", new BuildingRecipe(BuildingBase.BaseDict["Stockpile"], 100));
+        }
+
+        public BuildingBase RecipeOutput { get; }
+        public int Cost { get; }
+        public BuildingRecipe(BuildingBase RecipeOutput,int Cost)
+        {
+            this.RecipeOutput = RecipeOutput;
+            this.Cost = Cost;
+        }
+
+        public void Output(Point Position)
+        {
+            Play.Resources -= Cost;
+            Play.Buildings.Add(Activator.CreateInstance(RecipeOutput.BuildingType, Position) as Building);
+        }
+    }
+
+    public class UnitRecipe
+    {
+        public static Dictionary<string, UnitRecipe> UnitRecipes = new Dictionary<string, UnitRecipe>();
+
+        public static void Initialize()
+        {
+            UnitRecipes.Add("Creep", new UnitRecipe(UnitBaseMelee.Dictionary["Creep"],50));
+            UnitRecipes.Add("Miner", new UnitRecipe(UnitBaseGatherer.Dictionary["Miner"],25));
+            UnitRecipes.Add("Builder", new UnitRecipe(UnitBaseBuilder.Dictionary["Builder"], 25));
         }
 
         public UnitBase RecipeOutput { get; }
         public int Cost { get; }
 
-        public SpawnRecipe(UnitBase RecipeOutput,int Cost)
+        public UnitRecipe(UnitBase RecipeOutput,int Cost)
         {
             this.RecipeOutput = RecipeOutput;
             this.Cost = Cost;
@@ -34,10 +65,7 @@ namespace StrategyGame
         public void Output(Vector2 Position)
         {
             Play.Resources -= Cost;
-            if (RecipeOutput is MeleeUnitBase)
-                Play.Units.Add(new UnitMelee(Position, RecipeOutput as MeleeUnitBase));
-            if (RecipeOutput is GathererUnitBase)
-                Play.Units.Add(new UnitMiner(Position, RecipeOutput as GathererUnitBase));
+            Play.Units.Add(Activator.CreateInstance(RecipeOutput.UnitType, Position, RecipeOutput) as Unit);
         }
     }
 }

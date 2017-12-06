@@ -21,8 +21,6 @@ namespace StrategyGame
         public static readonly Point WindowPosition = new Point(200);
         public static readonly Rectangle FadeRectangle = new Rectangle(0, 0, WindowWidth, WindowHeight);
 
-        
-
         static Screen screen = Screen.MainMenu;
 
         public static bool Quit = false;
@@ -58,8 +56,7 @@ namespace StrategyGame
             UnitBase.Initialize();
             BuildingBase.Initialize();
             ResourceNodeBase.Initialize();
-            UnitRecipe.Initialize();
-            Building.InitializeRecipes();
+            Recipe.Initialize();
         }
 
         protected override void UnloadContent()
@@ -75,6 +72,7 @@ namespace StrategyGame
             //Input
             MouseExtension.Update();
             KeyboardExtension.Update();
+            Input.Update();
 
             switch (screen)
             {

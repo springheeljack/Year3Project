@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StrategyGame
 {
-    public interface IAttacker: ISelectable
+    public interface IAttacker : IRectangleObject
     {
         UnitBaseMelee Base { get; }
         float AttackTimer { get; }

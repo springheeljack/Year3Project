@@ -8,52 +8,41 @@ using System.Threading.Tasks;
 
 namespace StrategyGame
 {
-    public class ResourceNodeBase
+    public class ResourceNodeBase : EntityBase
     {
         public static Dictionary<string, ResourceNodeBase> Dictionary = new Dictionary<string, ResourceNodeBase>();
-        public string Name { get; }
-        public Point Size { get; }
-        public Texture2D Texture { get; }
         public int ResourceMin { get; }
         public int ResourceMax { get; }
         public List<UnitBaseGatherer> AcceptedGatherers { get; } = new List<UnitBaseGatherer>();
 
-        public ResourceNodeBase(string Name, Point Size, int ResourceMin, int ResourceMax, List<UnitBaseGatherer> AcceptedGatherers)
+        public ResourceNodeBase(Type ResourceType, string Name, Point Size, int ResourceMin, int ResourceMax, List<UnitBaseGatherer> AcceptedGatherers,bool Selectable) : base(ResourceType,Name,Size,Selectable)
         {
-            this.Name = Name;
-            this.Size = Size;
             this.ResourceMin = ResourceMin;
             this.ResourceMax = ResourceMax;
             this.AcceptedGatherers = AcceptedGatherers;
-            Texture = Art.ResourceNodeTextures[Name];
         }
 
         public static void Initialize()
         {
-            Dictionary.Add("Iron Rock", new ResourceNodeBase("Iron Rock", new Point(32), 50, 250, new List<UnitBaseGatherer>() { UnitBaseGatherer.Dictionary["Miner"] }));
-            Dictionary.Add("Tree", new ResourceNodeBase("Tree", new Point(32), 50, 250, new List<UnitBaseGatherer>() { UnitBaseGatherer.Dictionary["Miner"] }));
+            Dictionary.Add("Iron Rock", new ResourceNodeBase(typeof(ResourceNode), "Iron Rock", new Point(32), 50, 250, new List<UnitBaseGatherer>() { UnitBaseGatherer.Dictionary["Miner"] },true));
+            Dictionary.Add("Tree", new ResourceNodeBase(typeof(ResourceNode), "Tree", new Point(32), 50, 250, new List<UnitBaseGatherer>() { UnitBaseGatherer.Dictionary["Miner"] },true));
         }
     }
-    public interface IResourceNode : ISelectable
+    public interface IResourceNode
     {
         int Resources { get; set; }
         bool Gatherable { get; set; }
         ResourceNodeBase Base { get; }
     }
 
-    public class ResourceNode : IResourceNode
+    public class ResourceNode : Entity, IResourceNode
     {
-        public ResourceNodeBase Base { get; }
+        new public ResourceNodeBase Base { get { return base.Base as ResourceNodeBase; } }
         public int Resources { get; set; }
         public bool Gatherable { get; set; } = true;
-        public string Name { get { return Base.Name; } }
-        public Rectangle Rectangle { get; }
-        public Texture2D Texture { get { return Base.Texture; } }
 
-        public ResourceNode(Point Position, ResourceNodeBase Base)
+        public ResourceNode(ResourceNodeBase Base, Vector2 Position) : base(Base, Position)
         {
-            this.Base = Base;
-            Rectangle = new Rectangle(Position, Base.Size);
             Random random = new Random();
             Resources = random.Next(Base.ResourceMin, Base.ResourceMax);
         }
@@ -66,9 +55,9 @@ namespace StrategyGame
                 Gatherable = false;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override bool ToRemove()
         {
-            spriteBatch.Draw(Texture, Rectangle, Color.White);
+            return !Gatherable;
         }
     }
 }

@@ -64,7 +64,7 @@ namespace StrategyGame
                     if (textInputKeyStates[k] == KeyState.Hit)
                         currentInput += (char)k;
                 }
-                if (keyStates[Keys.Back] == KeyState.Hit && currentInput.Length >0)
+                if (keyStates[Keys.Back] == KeyState.Hit && currentInput.Length > 0)
                 {
                     currentInput = currentInput.Substring(0, currentInput.Length - 1);
                 }

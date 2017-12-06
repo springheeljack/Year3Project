@@ -5,28 +5,37 @@ using System.Collections.Generic;
 
 namespace StrategyGame
 {
-    public abstract class UnitBase
+    public static class UnitExtension
     {
-        public string Name { get; }
+        public static void DrawGatherReticles(this UnitGatherer Unit, SpriteBatch spriteBatch)
+        {
+            if (Unit.GatherTarget != null)
+            {
+                Texture2D reticleTexture = Art.Textures["Reticle"];
+                spriteBatch.Draw(reticleTexture, new Rectangle(Unit.GatherTarget.Rectangle.Center + Art.ReticleAndFlagOffset, reticleTexture.Bounds.Size), Color.White);
+            }
+            if (Unit.DepositTarget != null)
+            {
+                Texture2D reticleTexture = Art.Textures["GreenFlag"];
+                spriteBatch.Draw(reticleTexture, new Rectangle(Unit.DepositTarget.Rectangle.Center + Art.ReticleAndFlagOffset, reticleTexture.Bounds.Size), Color.White);
+            }
+        }
+    }
+
+    public abstract class UnitBase : EntityBase
+    {
         public int MaxHealth { get; }
         public float Speed { get; }
-        public Texture2D Texture { get; }
-        public Point Size { get; }
-        public Type UnitType { get; }
-        public UnitBase(Type UnitType, string Name, Point Size, int MaxHealth, float Speed)
+        public UnitBase(Type UnitType, string Name, Point Size, int MaxHealth, float Speed, bool Selectable) : base(UnitType, Name, Size, Selectable)
         {
-            this.UnitType = UnitType;
-            this.Name = Name;
-            this.Size = Size;
             this.MaxHealth = MaxHealth;
             this.Speed = Speed;
-            Texture = Art.UnitTextures[Name];
         }
         public static void Initialize()
         {
-            UnitBaseMelee.Dictionary.Add("Creep", new UnitBaseMelee("Creep", new Point(32), 50, 5, 1.0f, 2.0f));
-            UnitBaseGatherer.Dictionary.Add("Miner", new UnitBaseGatherer("Miner", new Point(32), 25, 1.0f, 1.0f, 10));
-            UnitBaseBuilder.Dictionary.Add("Builder", new UnitBaseBuilder("Builder", new Point(32), 25, 1.0f, 1.0f));
+            UnitBaseMelee.Dictionary.Add("Creep", new UnitBaseMelee("Creep", new Point(32), 50, 5, 1.0f, 2.0f, true));
+            UnitBaseGatherer.Dictionary.Add("Miner", new UnitBaseGatherer("Miner", new Point(32), 25, 1.0f, 1.0f, 10, true));
+            UnitBaseBuilder.Dictionary.Add("Builder", new UnitBaseBuilder("Builder", new Point(32), 25, 1.0f, 1.0f, true));
         }
     }
 
@@ -35,7 +44,7 @@ namespace StrategyGame
         public static Dictionary<string, UnitBaseMelee> Dictionary = new Dictionary<string, UnitBaseMelee>();
         public int AttackDamage { get; }
         public float AttackSpeed { get; }
-        public UnitBaseMelee(string Name, Point Size, int MaxHealth, int AttackDamage, float AttackSpeed, float Speed) : base(typeof(UnitMelee),Name, Size, MaxHealth, Speed)
+        public UnitBaseMelee(string Name, Point Size, int MaxHealth, int AttackDamage, float AttackSpeed, float Speed, bool Selectable) : base(typeof(UnitMelee), Name, Size, MaxHealth, Speed, Selectable)
         {
             this.AttackDamage = AttackDamage;
             this.AttackSpeed = AttackSpeed;
@@ -47,49 +56,40 @@ namespace StrategyGame
         public static Dictionary<string, UnitBaseGatherer> Dictionary = new Dictionary<string, UnitBaseGatherer>();
         public float GatherSpeed { get; }
         public int MaxCapacity { get; }
-        public UnitBaseGatherer(string Name, Point Size, int MaxHealth, float Speed, float GatherSpeed, int MaxCapacity) : base(typeof(UnitGatherer),Name, Size, MaxHealth, Speed)
+        public UnitBaseGatherer(string Name, Point Size, int MaxHealth, float Speed, float GatherSpeed, int MaxCapacity, bool Selectable) : base(typeof(UnitGatherer), Name, Size, MaxHealth, Speed, Selectable)
         {
             this.GatherSpeed = GatherSpeed;
             this.MaxCapacity = MaxCapacity;
         }
     }
 
-    public class UnitBaseBuilder : UnitBase, IHasBuildRecipe
+    public class UnitBaseBuilder : UnitBase, IHasRecipe
     {
-        static List<BuildingRecipe> Recipes = new List<BuildingRecipe>();
-        public List<BuildingRecipe> GetBuildingRecipes() { return Recipes; }
+        static List<Recipe> recipes = new List<Recipe>();
+        public List<Recipe> Recipes { get { return Recipes; } }
         public static Dictionary<string, UnitBaseBuilder> Dictionary = new Dictionary<string, UnitBaseBuilder>();
         public float BuildSpeed { get; }
-        public UnitBaseBuilder(string Name, Point Size, int MaxHealth, float Speed, float BuildSpeed) : base(typeof(UnitBuilder), Name, Size, MaxHealth, Speed)
+        public UnitBaseBuilder(string Name, Point Size, int MaxHealth, float Speed, float BuildSpeed, bool Selectable) : base(typeof(UnitBuilder), Name, Size, MaxHealth, Speed, Selectable)
         {
             this.BuildSpeed = BuildSpeed;
         }
     }
 
-    public abstract class Unit : IHealth
+    public abstract class Unit : Entity, IHealth
     {
-        public Texture2D Texture { get { return Base.Texture; } }
-        public string Name { get { return Base.Name; } }
-        //Point Size { get; }
-        //Point DrawingSize { get; }
-        public Vector2 Position { get; set; }
         public Vector2 Destination { get; set; }
         public bool HasDestination { get; set; } = false;
-        public Rectangle Rectangle { get; set; }
         public int Health { get; set; }
         public int MaxHealth { get { return Base.MaxHealth; } }
-        //public float Speed { get; }
         public IAttacker LastAttacker { get; set; }
-        public UnitBase Base { get; }
+        new public UnitBase Base { get { return base.Base as UnitBase; } }
 
-        public Unit(Vector2 Position, UnitBase Base)
+        public Unit(UnitBase Base, Vector2 Position) : base(Base, Position)
         {
-            this.Base = Base;
-            this.Position = Position;
             Health = Base.MaxHealth;
         }
 
-        public virtual void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             if (HasDestination)
             {
@@ -107,11 +107,7 @@ namespace StrategyGame
                     HasDestination = false;
             }
 
-            Rectangle = new Rectangle(Position.ToPoint() - Base.Size.Half(), Base.Size);
-        }
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(Texture, Rectangle, Color.White);
+            base.Update(gameTime);
         }
         public void SetDestination(Vector2 Destination)
         {
@@ -121,7 +117,7 @@ namespace StrategyGame
 
         public void DrawDestinationFlag(SpriteBatch spriteBatch)
         {
-            Texture2D flagTexture = Art.UITextures["Flag"];
+            Texture2D flagTexture = Art.Textures["Flag"];
             spriteBatch.Draw(flagTexture, new Rectangle(Destination.ToPoint() + Art.ReticleAndFlagOffset, flagTexture.Bounds.Size), Color.White);
         }
 
@@ -129,6 +125,11 @@ namespace StrategyGame
         {
             Health -= Attacker.Base.AttackDamage;
             LastAttacker = Attacker;
+        }
+
+        public override bool ToRemove()
+        {
+            return Health <= 0;
         }
     }
 
@@ -139,9 +140,8 @@ namespace StrategyGame
         public float AttackSpeed { get; }
         public new UnitBaseMelee Base { get { return base.Base as UnitBaseMelee; } }
 
-        public UnitMelee(Vector2 Position, UnitBaseMelee UnitBase) : base(Position, UnitBase)
+        public UnitMelee(UnitBaseMelee Base, Vector2 Position) : base(Base, Position)
         {
-
         }
 
         //////////////TODO moving with collision
@@ -182,7 +182,7 @@ namespace StrategyGame
 
         public void DrawAttackReticle(SpriteBatch spriteBatch)
         {
-            Texture2D reticleTexture = Art.UITextures["Reticle"];
+            Texture2D reticleTexture = Art.Textures["Reticle"];
             spriteBatch.Draw(reticleTexture, new Rectangle(AttackTarget.Rectangle.Center + Art.ReticleAndFlagOffset, reticleTexture.Bounds.Size), Color.White);
         }
     }
@@ -193,9 +193,9 @@ namespace StrategyGame
         public int CarriedResources { get; set; }
         public float GatherSpeed { get; set; }
         public ResourceNode GatherTarget { get; set; } = null;
-        public IResourceDeposit DepositTarget { get; set; } = null;
-        public IRectangleObject CurrentTarget { get; set; } = null;
-        public UnitGatherer(Vector2 Position, UnitBaseGatherer UnitBase) : base(Position, UnitBase) { }
+        public Building DepositTarget { get; set; } = null;
+        public Entity CurrentTarget { get; set; } = null;
+        public UnitGatherer(UnitBaseGatherer Base, Vector2 Position) : base(Base, Position) { }
         public override void Update(GameTime gameTime)
         {
             if (GatherTarget != null && !GatherTarget.Gatherable)
@@ -233,7 +233,7 @@ namespace StrategyGame
                     }
                     else
                     {
-                        if (GatherSpeed<=0.0f)
+                        if (GatherSpeed <= 0.0f)
                         {
                             GatherSpeed += Base.GatherSpeed;
                             if (!GatherTarget.Gatherable)
@@ -248,27 +248,19 @@ namespace StrategyGame
                     }
                 }
             }
-            
+
 
             if (GatherSpeed > 0.0f)
                 GatherSpeed -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);
         }
-        public void DrawGatherReticle(SpriteBatch spriteBatch)
-        {
-            Texture2D reticleTexture = Art.UITextures["Reticle"];
-            spriteBatch.Draw(reticleTexture, new Rectangle(GatherTarget.Rectangle.Center + Art.ReticleAndFlagOffset, reticleTexture.Bounds.Size), Color.White);
-        }
-        public void DrawDepositReticle(SpriteBatch spriteBatch)
-        {
-            Texture2D reticleTexture = Art.UITextures["GreenFlag"];
-            spriteBatch.Draw(reticleTexture, new Rectangle(DepositTarget.Rectangle.Center + Art.ReticleAndFlagOffset, reticleTexture.Bounds.Size), Color.White);
-        }
     }
 
-    public class UnitBuilder
+    public class UnitBuilder : Unit, IHasRecipe
     {
-
+        public static List<Recipe> recipes = new List<Recipe>();
+        public List<Recipe> Recipes { get { return recipes; } }
+        public UnitBuilder(UnitBaseBuilder Base, Vector2 Position) : base(Base, Position) { }
     }
 }

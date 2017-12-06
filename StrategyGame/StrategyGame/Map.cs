@@ -37,7 +37,7 @@ namespace StrategyGame
                     {
                         cost = int.Parse(temp);
                         temp = "";
-                        tiles[x, y] = new Tile(Art.TileTextures[Art.tilePaths[tileTexture]], x, y, cost, tileTexture);
+                        tiles[x, y] = new Tile(Art.Textures[Art.TilePaths[tileTexture]], x, y, cost, tileTexture);
                         x++;
                     }
                     else
@@ -59,7 +59,7 @@ namespace StrategyGame
 
         public void ChangeTile(int X, int Y, string Tile,int TileIndex)
         {
-            tiles[X, Y].Texture = Art.TileTextures[Tile];
+            tiles[X, Y].Texture = Art.Textures[Tile];
             tiles[X, Y].TextureIndex = TileIndex;
         }
 

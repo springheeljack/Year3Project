@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 
 namespace StrategyGame
 {
-    public interface IGatherer : ISelectable
+    public interface IGatherer
     {
         UnitBaseGatherer Base { get; }
         int CarriedResources { get; set; }
         float GatherSpeed { get; set; }
         ResourceNode GatherTarget { get; set; }
-        IResourceDeposit DepositTarget { get; set; }
-        IRectangleObject CurrentTarget { get; set; }
-        void DrawGatherReticle(SpriteBatch spriteBatch);
-        void DrawDepositReticle(SpriteBatch spriteBatch);
+        Building DepositTarget { get; set; }
+        Entity CurrentTarget { get; set; }
     }
 }

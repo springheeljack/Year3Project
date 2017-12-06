@@ -22,7 +22,7 @@ namespace StrategyGame
         public Button(Point position, string text)
         {
             this.text = text;
-            texture = Art.UITextures["Button"];
+            texture = Art.Textures["Button"];
             rectangle = new Rectangle(position, texture.Bounds.Size);
         }
 
@@ -125,14 +125,14 @@ namespace StrategyGame
             set
             {
                 tile = value;
-                texture = Art.TileTextures[tile];
+                texture = Art.Textures[tile];
             }
         }
         public ButtonMapEditorSelectTile(Point position, string tile, int textureIndex) : base("")
         {
             this.tile = tile;
             this.textureIndex = textureIndex;
-            Initialize(position, Art.TileTextures[tile]);
+            Initialize(position, Art.Textures[tile]);
             Resize();
         }
         public override void Action()

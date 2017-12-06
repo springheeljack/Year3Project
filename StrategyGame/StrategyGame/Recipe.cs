@@ -8,64 +8,40 @@ using System.Threading.Tasks;
 
 namespace StrategyGame
 {
-    public interface IHasUnitRecipe
+    public interface IHasRecipe
     {
-        List<UnitRecipe> GetUnitRecipes();
+        List<Recipe> Recipes { get; }
     }
 
-    public interface IHasBuildRecipe
+    public class Recipe
     {
-        List<BuildingRecipe> GetBuildingRecipes();
-    }
-
-    public class BuildingRecipe
-    {
-        public static Dictionary<string, BuildingRecipe> BuildingRecipes = new Dictionary<string, BuildingRecipe>();
-
+        public static Dictionary<string, Recipe> Dictionary = new Dictionary<string, Recipe>();
         public static void Initialize()
         {
-            BuildingRecipes.Add("Stockpile", new BuildingRecipe(BuildingBase.BaseDict["Stockpile"], 100));
+            Dictionary.Add("Creep", new Recipe(UnitBaseMelee.Dictionary["Creep"], 50));
+            Dictionary.Add("Miner", new Recipe(UnitBaseGatherer.Dictionary["Miner"], 25));
+            Dictionary.Add("Builder", new Recipe(UnitBaseBuilder.Dictionary["Builder"], 25));
+            Dictionary.Add("Stockpile", new Recipe(BuildingBase.Dictionary["Stockpile"], 100));
+
+            BuildingTownCenter.recipes.Add(Dictionary["Creep"]);
+            BuildingTownCenter.recipes.Add(Dictionary["Miner"]);
+            BuildingTownCenter.recipes.Add(Dictionary["Builder"]);
+
+            UnitBuilder.recipes.Add(Dictionary["Stockpile"]);
         }
 
-        public BuildingBase RecipeOutput { get; }
-        public int Cost { get; }
-        public BuildingRecipe(BuildingBase RecipeOutput,int Cost)
+        public Recipe(EntityBase Output, int Cost)
         {
-            this.RecipeOutput = RecipeOutput;
+            this.Output = Output;
             this.Cost = Cost;
         }
 
-        public void Output(Point Position)
-        {
-            Play.Resources -= Cost;
-            Play.Buildings.Add(Activator.CreateInstance(RecipeOutput.BuildingType, Position) as Building);
-        }
-    }
-
-    public class UnitRecipe
-    {
-        public static Dictionary<string, UnitRecipe> UnitRecipes = new Dictionary<string, UnitRecipe>();
-
-        public static void Initialize()
-        {
-            UnitRecipes.Add("Creep", new UnitRecipe(UnitBaseMelee.Dictionary["Creep"],50));
-            UnitRecipes.Add("Miner", new UnitRecipe(UnitBaseGatherer.Dictionary["Miner"],25));
-            UnitRecipes.Add("Builder", new UnitRecipe(UnitBaseBuilder.Dictionary["Builder"], 25));
-        }
-
-        public UnitBase RecipeOutput { get; }
+        public EntityBase Output { get; }
         public int Cost { get; }
-
-        public UnitRecipe(UnitBase RecipeOutput,int Cost)
-        {
-            this.RecipeOutput = RecipeOutput;
-            this.Cost = Cost;
-        }
-
-        public void Output(Vector2 Position)
+        public void Complete(Vector2 Position)
         {
             Play.Resources -= Cost;
-            Play.Units.Add(Activator.CreateInstance(RecipeOutput.UnitType, Position, RecipeOutput) as Unit);
+            EntityManager.Entities.Add(Activator.CreateInstance(Output.EntityType, Output, Position) as Entity);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StrategyGame
 {
-    public interface IHealth : ISelectable
+    public interface IHealth : IRectangleObject
     {
         int Health { get; set; }
         int MaxHealth { get; }

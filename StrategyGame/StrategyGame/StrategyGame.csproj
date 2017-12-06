@@ -48,6 +48,7 @@
     <Compile Include="IAttacker.cs" />
     <Compile Include="IGatherer.cs" />
     <Compile Include="IHealth.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="IRectangleObject.cs" />
     <Compile Include="KeyboardExtension.cs" />
     <Compile Include="MainMenu.cs" />
@@ -62,7 +63,6 @@
     <Compile Include="SelectorList.cs" />
     <Compile Include="Art.cs" />
     <Compile Include="Play.cs" />
-    <Compile Include="ISelectable.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,6 @@ namespace StrategyGame
 {
     public interface IRectangleObject
     {
-        Texture2D Texture { get; }
-        Rectangle Rectangle { get; }
+        Rectangle Rectangle { get; set; }
     }
 }

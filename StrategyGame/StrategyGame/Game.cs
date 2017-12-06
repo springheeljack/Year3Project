@@ -1,16 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections;
 
 namespace StrategyGame
 {
-    public enum Screen
-    {
-        MainMenu,
-        MapEditor,
-        Play
-    }
-
     public class Game : Microsoft.Xna.Framework.Game
     {
         public static readonly int TileSize = 16;
@@ -21,13 +15,11 @@ namespace StrategyGame
         public static readonly Point WindowPosition = new Point(200);
         public static readonly Rectangle FadeRectangle = new Rectangle(0, 0, WindowWidth, WindowHeight);
 
-        static Screen screen = Screen.MainMenu;
-
         public static bool Quit = false;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        public static Map map = new Map();
+        public static Screen Screen;
 
         public Game()
         {
@@ -53,10 +45,15 @@ namespace StrategyGame
 
             Art.LoadContent(Content);
 
+            ButtonBase.Initialize();
+            TextBase.Initialize();
+            ScreenBase.Initialize();
             UnitBase.Initialize();
             BuildingBase.Initialize();
             ResourceNodeBase.Initialize();
             Recipe.Initialize();
+
+            Screen = new Screen(ScreenBase.Dictionary["Main Menu"]);
         }
 
         protected override void UnloadContent()
@@ -66,26 +63,13 @@ namespace StrategyGame
 
         protected override void Update(GameTime gameTime)
         {
-            if (!MainMenu.Initialized)
-                MainMenu.Initialize();
-
             //Input
             MouseExtension.Update();
             KeyboardExtension.Update();
             Input.Update();
 
-            switch (screen)
-            {
-                case Screen.MainMenu:
-                    MainMenu.Update();
-                    break;
-                case Screen.MapEditor:
-                    MapEditor.Update();
-                    break;
-                case Screen.Play:
-                    Play.Update(gameTime);
-                    break;
-            }
+            //Entities
+            EntityManager.Update(gameTime);
 
             if (Quit)
                 Exit();
@@ -97,35 +81,14 @@ namespace StrategyGame
         {
             GraphicsDevice.Clear(Color.Magenta);
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, null);
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, null);
 
-            switch (screen)
-            {
-                case Screen.MainMenu:
-                    MainMenu.Draw(spriteBatch);
-                    break;
-                case Screen.MapEditor:
-                    MapEditor.Draw(spriteBatch);
-                    break;
-                case Screen.Play:
-                    Play.Draw(spriteBatch);
-                    break;
-            }
+
+            EntityManager.Draw(spriteBatch);
 
             spriteBatch.End();
 
             base.Draw(gameTime);
-        }
-
-        public static void ChangeScreen(Screen newScreen)
-        {
-            screen = newScreen;
-            switch (newScreen)
-            {
-                case Screen.MapEditor:
-                    map.LoadMap("test");
-                    break;
-            }
         }
     }
 }

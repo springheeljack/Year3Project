@@ -7,10 +7,11 @@ namespace StrategyGame
 {
     public class BuildingBase : EntityBase
     {
+        new static readonly float LayerDepth = 0.5f;
         public static Dictionary<string, BuildingBase> Dictionary = new Dictionary<string, BuildingBase>();
         public int MaxHealth { get; }
         public bool Depositable { get; }
-        public BuildingBase(Type BuildingType, string Name, Point Size, int MaxHealth,bool Depositable,bool Selectable) : base(BuildingType, Name, Size,Selectable)
+        public BuildingBase(Type BuildingType, string Name, Point Size, int MaxHealth,bool Depositable,bool Selectable) : base(BuildingType, Name, Size,Selectable,LayerDepth)
         {
             this.MaxHealth = MaxHealth;
             this.Depositable = Depositable;
@@ -37,11 +38,6 @@ namespace StrategyGame
         {
             Health -= Attacker.Base.AttackDamage;
             LastAttacker = Attacker;
-        }
-
-        public override bool ToRemove()
-        {
-            return Health <= 0;
         }
     }
 

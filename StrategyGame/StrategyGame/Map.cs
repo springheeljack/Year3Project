@@ -3,14 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace StrategyGame
 {
-    public class Map
+    public static class Map
     {
-        Tile[,] tiles;
-        int width, height;
-        public int Width { get { return width; } }
-        public int Height { get { return height; } }
+        static Tile[,] tiles;
+        static int width, height;
+        public static int Width { get { return width; } }
+        public static int Height { get { return height; } }
 
-        public bool LoadMap(string filePath)
+        public static bool LoadMap(string filePath)
         {   if (!System.IO.File.Exists("Content/Map/" + filePath + ".sgmap"))
                 throw new System.Exception("Could not find default map.");
             string[] read;
@@ -51,19 +51,19 @@ namespace StrategyGame
             return true;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public static void Draw(SpriteBatch spriteBatch)
         {
             foreach (Tile t in tiles)
                 t.Draw(spriteBatch);
         }
 
-        public void ChangeTile(int X, int Y, string Tile,int TileIndex)
+        public static void ChangeTile(int X, int Y, string Tile,int TileIndex)
         {
             tiles[X, Y].Texture = Art.Textures[Tile];
             tiles[X, Y].TextureIndex = TileIndex;
         }
 
-        public void SaveMap(string filePath)
+        public static void SaveMap(string filePath)
         {
             System.IO.File.Delete("Content/Map/" + filePath + ".sgmap");
             string data = "";

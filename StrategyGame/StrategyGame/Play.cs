@@ -31,8 +31,8 @@ namespace StrategyGame
                 fileNames.Add(Path.GetFileNameWithoutExtension(fi.Name));
             MapList = new SelectorList(fileNames, new Point(100, 100));
 
-            PlayButtons.Add(new ButtonPlayLoadMap(new Point(600, 100)));
-            PlayButtons.Add(new ButtonEnterMainMenu(new Point(600, 200)));
+            //PlayButtons.Add(new ButtonPlayLoadMap(new Point(600, 100)));
+            //PlayButtons.Add(new ButtonEnterMainMenu(new Point(600, 200)));
 
             Entities.Add(new BuildingTownCenter(BuildingBase.Dictionary["Town Center"], new Vector2(128, 128)));
 
@@ -50,12 +50,12 @@ namespace StrategyGame
             {
                 case PlayScreen.MapList:
                     MapList.Update();
-                    foreach (Button b in PlayButtons)
-                        b.Update();
+                    //foreach (Button b in PlayButtons)
+                    //    b.Update();
                     break;
 
                 case PlayScreen.Game:
-                    EntityManager.Update(gameTime);
+                    
 
                     //Mouse
                     if (MouseExtension.Left == ClickState.Clicked)
@@ -140,8 +140,8 @@ namespace StrategyGame
                         b.Draw(spriteBatch);
                     break;
                 case PlayScreen.Game:
-                    Game.map.Draw(spriteBatch);
-                    EntityManager.Draw(spriteBatch);
+                    Map.Draw(spriteBatch);
+
                     if (Selected != null)
                     {
                         spriteBatch.Draw(Selected.Base.Texture, new Vector2(20, 650), Color.White);

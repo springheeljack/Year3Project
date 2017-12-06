@@ -10,12 +10,13 @@ namespace StrategyGame
 {
     public class ResourceNodeBase : EntityBase
     {
+        new static readonly float LayerDepth = 0.5f;
         public static Dictionary<string, ResourceNodeBase> Dictionary = new Dictionary<string, ResourceNodeBase>();
         public int ResourceMin { get; }
         public int ResourceMax { get; }
         public List<UnitBaseGatherer> AcceptedGatherers { get; } = new List<UnitBaseGatherer>();
 
-        public ResourceNodeBase(Type ResourceType, string Name, Point Size, int ResourceMin, int ResourceMax, List<UnitBaseGatherer> AcceptedGatherers,bool Selectable) : base(ResourceType,Name,Size,Selectable)
+        public ResourceNodeBase(Type ResourceType, string Name, Point Size, int ResourceMin, int ResourceMax, List<UnitBaseGatherer> AcceptedGatherers,bool Selectable) : base(ResourceType,Name,Size,Selectable,LayerDepth)
         {
             this.ResourceMin = ResourceMin;
             this.ResourceMax = ResourceMax;
@@ -53,11 +54,6 @@ namespace StrategyGame
             Gatherer.CarriedResources += 1;
             if (Resources <= 0)
                 Gatherable = false;
-        }
-
-        public override bool ToRemove()
-        {
-            return !Gatherable;
         }
     }
 }

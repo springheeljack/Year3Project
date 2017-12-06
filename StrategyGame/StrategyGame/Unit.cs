@@ -24,9 +24,10 @@ namespace StrategyGame
 
     public abstract class UnitBase : EntityBase
     {
+        new static readonly float LayerDepth = 0.6f;
         public int MaxHealth { get; }
         public float Speed { get; }
-        public UnitBase(Type UnitType, string Name, Point Size, int MaxHealth, float Speed, bool Selectable) : base(UnitType, Name, Size, Selectable)
+        public UnitBase(Type UnitType, string Name, Point Size, int MaxHealth, float Speed, bool Selectable) : base(UnitType, Name, Size, Selectable,LayerDepth)
         {
             this.MaxHealth = MaxHealth;
             this.Speed = Speed;
@@ -127,10 +128,10 @@ namespace StrategyGame
             LastAttacker = Attacker;
         }
 
-        public override bool ToRemove()
-        {
-            return Health <= 0;
-        }
+        //public override bool ToRemove()
+        //{
+        //    return Health <= 0;
+        //}
     }
 
     public class UnitMelee : Unit, IAttacker

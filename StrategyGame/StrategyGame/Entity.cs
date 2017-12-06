@@ -15,7 +15,7 @@ namespace StrategyGame
         public Rectangle Rectangle { get; set; }
         public Vector2 Position { get; set; }
         public Color Color { get; set; }
-        public Entity(EntityBase Base,Vector2 Position)
+        public Entity(EntityBase Base, Vector2 Position)
         {
             this.Base = Base;
             this.Position = Position;
@@ -28,13 +28,16 @@ namespace StrategyGame
         }
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Base.Texture, Rectangle, Color);
+            spriteBatch.Draw(Base.Texture, Rectangle, null, Color, 0.0f, Vector2.Zero, SpriteEffects.None, Base.LayerDepth);
         }
         void UpdateRectangle()
         {
-            Rectangle = new Rectangle(Position.ToPoint()-Base.Size.Half(), Base.Size);
+            Rectangle = new Rectangle(Position.ToPoint() - Base.Size.Half(), Base.Size);
         }
-        public abstract bool ToRemove();
+        public void Remove()
+        {
+            EntityManager.ToRemove.Add(this);
+        }
     }
 
     public abstract class EntityBase
@@ -44,13 +47,15 @@ namespace StrategyGame
         public Point Size { get; }
         public Type EntityType { get; }
         public bool Selectable { get; }
-        public EntityBase(Type EntityType, string Name, Point Size,bool Selectable)
+        public float LayerDepth { get; }
+        public EntityBase(Type EntityType, string Name, Point Size, bool Selectable, float LayerDepth)
         {
             this.EntityType = EntityType;
             this.Name = Name;
             this.Size = Size;
             this.Selectable = Selectable;
-            Texture = Art.Textures[Name];
+            this.LayerDepth = LayerDepth;
+            Texture = Name == "Text" ? null : Art.Textures[Name];
         }
     }
 
@@ -58,17 +63,21 @@ namespace StrategyGame
     {
         public static List<Entity> Entities { get; set; } = new List<Entity>();
         public static List<Entity> ToRemove { get; set; } = new List<Entity>();
+        public static List<Entity> ToAdd { get; set; } = new List<Entity>();
         public static void Update(GameTime gameTime)
         {
             foreach (Entity e in Entities)
             {
                 e.Update(gameTime);
-                if (e.ToRemove())
-                    ToRemove.Add(e);
+                //if (e.ToRemove())
+                //    ToRemove.Add(e);
             }
             foreach (Entity e in ToRemove)
                 Entities.Remove(e);
             ToRemove.Clear();
+            foreach (Entity e in ToAdd)
+                Entities.Add(e);
+            ToAdd.Clear();
         }
         public static void Draw(SpriteBatch spriteBatch)
         {

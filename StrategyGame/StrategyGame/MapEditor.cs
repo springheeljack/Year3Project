@@ -13,11 +13,11 @@ namespace StrategyGame
         static Point pauseMenuPosition = new Point(Game.WindowWidth/2-80, 100);
         static Point tileSelectorPosition = new Point(0, 640);
         static Point saveTextInputPosition = new Point(640, 64);
-        static int pauseMenuButtonYOffset = 100;
+        //static int pauseMenuButtonYOffset = 100;
         static string selectedTile = "Grass";
         static int selectedTileIndex = 0;
         static Rectangle selectorRectangle = new Rectangle(tileSelectorPosition, new Point(Game.GameScale * Game.TileSize));
-        static Rectangle mapArea = new Rectangle(0, 0, Game.map.Width * Game.GameScale * Game.TileSize, Game.map.Height * Game.GameScale * Game.TileSize);
+        static Rectangle mapArea = new Rectangle(0, 0, Map.Width * Game.GameScale * Game.TileSize, Map.Height * Game.GameScale * Game.TileSize);
         static bool isSaving = false;
         static bool isPaused = false;
         public static bool IsSaving
@@ -32,21 +32,21 @@ namespace StrategyGame
 
         static MapEditor()
         {
-            pauseMenuButtons[0] = new ButtonEnterMainMenu();
-            pauseMenuButtons[1] = new ButtonMapEditorSaveMap();
-            pauseMenuButtons[2] = new ButtonMapEditorLoadMap();
-            pauseMenuButtons[3] = new ButtonQuit();
+            //pauseMenuButtons[0] = new ButtonEnterMainMenu();
+            //pauseMenuButtons[1] = new ButtonMapEditorSaveMap();
+            //pauseMenuButtons[2] = new ButtonMapEditorLoadMap();
+            //pauseMenuButtons[3] = new ButtonQuit();
 
             for (int i = 0; i < numOfPauseMenuButtons; i++)
             {
-                pauseMenuButtons[i].Initialize(new Point(pauseMenuPosition.X, pauseMenuPosition.Y + i * pauseMenuButtonYOffset), Art.Textures["Button"]);
+                //pauseMenuButtons[i].Initialize(new Point(pauseMenuPosition.X, pauseMenuPosition.Y + i * pauseMenuButtonYOffset), Art.Textures["Button"]);
             }
 
             for (int i = 0; i < numOfTiles;i++)
             {
 
-                tileButtons[i] = new ButtonMapEditorSelectTile(
-                    new Point(tileSelectorPosition.X + (i / 2) * Game.TileSize * Game.GameScale, tileSelectorPosition.Y + (i % 2) * Game.TileSize * Game.GameScale), Art.TilePaths[i],i);
+                //tileButtons[i] = new ButtonMapEditorSelectTile(
+                //    new Point(tileSelectorPosition.X + (i / 2) * Game.TileSize * Game.GameScale, tileSelectorPosition.Y + (i % 2) * Game.TileSize * Game.GameScale), Art.TilePaths[i],i);
             }
         }
 
@@ -71,7 +71,7 @@ namespace StrategyGame
                     if (KeyboardExtension.IsKeyHit(Keys.Enter))
                     {
                         KeyboardExtension.StopReadingInput();
-                        Game.map.SaveMap(KeyboardExtension.CurrentInput);
+                        Map.SaveMap(KeyboardExtension.CurrentInput);
                         isSaving = false;
                     }
                 }
@@ -80,14 +80,14 @@ namespace StrategyGame
                     if (KeyboardExtension.IsKeyHit(Keys.Enter))
                     {
                         KeyboardExtension.StopReadingInput();
-                        Game.map.LoadMap(KeyboardExtension.CurrentInput);
+                        Map.LoadMap(KeyboardExtension.CurrentInput);
                         isLoading = false;
                     }
                 }
                 else
                 {
-                    foreach (Button b in pauseMenuButtons)
-                        b.Update();
+                    //foreach (Button b in pauseMenuButtons)
+                    //    b.Update();
                 }
             }
             else
@@ -95,15 +95,15 @@ namespace StrategyGame
                 if (MouseExtension.Left == ClickState.Held && MouseExtension.Rectangle.Intersects(mapArea))
                     PaintTile();
 
-                foreach (Button b in tileButtons)
-                    b.Update();
+                //foreach (Button b in tileButtons)
+                //    b.Update();
             }
 
         }
 
         public static void Draw(SpriteBatch spriteBatch)
         {
-            Game.map.Draw(spriteBatch);
+            Map.Draw(spriteBatch);
 
             foreach (Button b in tileButtons)
                 b.Draw(spriteBatch);
@@ -138,7 +138,7 @@ namespace StrategyGame
             y = MouseExtension.Rectangle.Y;
             x /= Game.TileSizeScaled;
             y /= Game.TileSizeScaled;
-            Game.map.ChangeTile(x, y, selectedTile,selectedTileIndex);
+            Map.ChangeTile(x, y, selectedTile,selectedTileIndex);
         }
     }
 }

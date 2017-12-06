@@ -35,5 +35,10 @@ namespace StrategyGame
             Vector2 vector = rectangle.Center.ToVector2();
             return vector - spriteFont.MeasureString(text) / 2;
         }
+
+        public static Vector2 CenterString(Vector2 position,SpriteFont spriteFont,string text)
+        {
+            return position - spriteFont.MeasureString(text) / 2;
+        }
     }
 }

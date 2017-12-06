@@ -1,203 +1,237 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 
 namespace StrategyGame
 {
-    public abstract class Button
+    public class ButtonBase : EntityBase
     {
-        public Rectangle rectangle;
-        public Texture2D texture;
-        public string text;
+        new static readonly float LayerDepth = 0.9f;
+        public static Dictionary<string, ButtonBase> Bases = new Dictionary<string, ButtonBase>();
+        public static Dictionary<string, Action> Actions = new Dictionary<string, Action>();
+        new static string Name = "Button";
+        public static void Initialize()
+        {
+            //Bases
+            Bases.Add("Standard", new ButtonBase(new Point(160, 80)));
 
-        public Button(Point position, Texture2D texture, string text)
-        {
-            this.texture = texture;
-            rectangle = new Rectangle(position, texture.Bounds.Size);
-            this.text = text;
-        }
-        public Button(string text)
-        {
-            this.text = text;
-        }
-        public Button(Point position, string text)
-        {
-            this.text = text;
-            texture = Art.Textures["Button"];
-            rectangle = new Rectangle(position, texture.Bounds.Size);
+            //Actions
+            Actions.Add("Quit", Quit);
+            Actions.Add("GotoPlayMenu", GotoPlayMenu);
+            Actions.Add("GotoMainMenu", GotoMainMenu);
+            Actions.Add("GotoPlayMenuLoadMap", GotoPlayMenuLoadMap);
+            Actions.Add("GotoMapEditorMenu", GotoMapEditorMenu);
+            Actions.Add("GotoMapEditorNewMap", GotoMapEditorNewMap);
         }
 
-        public abstract void Action();
-
-        public void Update()
-        {
-            if (MouseExtension.Left == ClickState.Clicked)
-                if (MouseExtension.Rectangle.Intersects(rectangle))
-                    Action();
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(texture, rectangle, Color.White);
-            spriteBatch.DrawString(Art.SpriteFont, text, Art.CenterString(rectangle, Art.SpriteFont, text), Color.Black);
-        }
-
-        public void Initialize(Point position, Texture2D texture)
-        {
-            this.texture = texture;
-            rectangle = new Rectangle(position, texture.Bounds.Size);
-        }
-    }
-
-    public class ButtonQuit : Button
-    {
-        new static string text = "Quit";
-        public ButtonQuit(Point position, Texture2D texture) : base(position, texture, text)
-        {
-        }
-        public ButtonQuit() : base(text)
-        {
-        }
-
-        public override void Action()
+        //Actions
+        private static void Quit()
         {
             Game.Quit = true;
         }
+        private static void GotoPlayMenu()
+        {
+            Game.Screen.Remove();
+            Game.Screen = new Screen(ScreenBase.Dictionary["Play Menu"]);
+        }
+        private static void GotoPlayMenuLoadMap()
+        {
+            Game.Screen.Remove();
+            Game.Screen = new Screen(ScreenBase.Dictionary["Play Menu Load Map"]);
+        }
+        private static void GotoMainMenu()
+        {
+            Game.Screen.Remove();
+            Game.Screen = new Screen(ScreenBase.Dictionary["Main Menu"]);
+        }
+        private static void GotoMapEditorMenu()
+        {
+            Game.Screen.Remove();
+            Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor Menu"]);
+        }
+        private static void GotoMapEditorNewMap()
+        {
+            Game.Screen.Remove();
+            Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor New Map"]);
+        }
+
+        public ButtonBase(Point Size) : base(typeof(Button), Name, Size, false, LayerDepth) { }
     }
 
-    public class ButtonEnterMapEditor : Button
+    public class Button : Entity
     {
-        new static string text = "Map Editor";
-        public ButtonEnterMapEditor(Point position, Texture2D texture) : base(position, texture, text)
+        string Text;
+        public Action Action;
+        public Button(ButtonBase Base,Vector2 Position,string Action,string Text) : base(Base, Position)
         {
+            this.Action = ButtonBase.Actions[Action];
+            this.Text = Text;
         }
-        public ButtonEnterMapEditor() : base(text)
+        public override void Update(GameTime gameTime)
         {
+            if (Input.MouseState.IsLeftClicked() && Input.MouseRectangle.Intersects(Rectangle))
+                Action();
+
+            base.Update(gameTime);
         }
 
-        public override void Action()
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            Game.ChangeScreen(Screen.MapEditor);
+            spriteBatch.DrawString(Art.SpriteFont, Text, Art.CenterString(Rectangle, Art.SpriteFont, Text), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+            base.Draw(spriteBatch);
         }
     }
 
-    public class ButtonEnterPlay : Button
-    {
-        new static string text = "Play";
-        public ButtonEnterPlay(Point position, Texture2D texture) : base(position, texture, text)
-        {
-        }
-        public ButtonEnterPlay() : base(text)
-        {
-        }
+    ////public abstract class Button
+    ////{
+    ////    public Rectangle rectangle;
+    ////    public Texture2D texture;
+    ////    public string text;
+    ////    public Button(Point position, Texture2D texture, string text)
+    ////    {
+    ////        this.texture = texture;
+    ////        rectangle = new Rectangle(position, texture.Bounds.Size);
+    ////        this.text = text;
+    ////    }
+    ////    public Button(string text)
+    ////    {
+    ////        this.text = text;
+    ////    }
+    ////    public Button(Point position, string text)
+    ////    {
+    ////        this.text = text;
+    ////        texture = Art.Textures["Button"];
+    ////        rectangle = new Rectangle(position, texture.Bounds.Size);
+    ////    }
+    //    public abstract void Action();
+    //    public void Update()
+    //    {
+    //        if (MouseExtension.Left == ClickState.Clicked)
+    //            if (MouseExtension.Rectangle.Intersects(rectangle))
+    //                Action();
+    //    }
+    //    public void Draw(SpriteBatch spriteBatch)
+    //    {
+    //        spriteBatch.Draw(texture, rectangle, Color.White);
+    //        spriteBatch.DrawString(Art.SpriteFont, text, Art.CenterString(rectangle, Art.SpriteFont, text), Color.Black);
+    //    }
+    //    public void Initialize(Point position, Texture2D texture)
+    //    {
+    //        this.texture = texture;
+    //        rectangle = new Rectangle(position, texture.Bounds.Size);
+    //    }
+    //}
 
-        public override void Action()
-        {
-            Game.ChangeScreen(Screen.Play);
-        }
-    }
 
-    public class ButtonEnterMainMenu : Button
-    {
-        new static string text = "Main Menu";
-        public ButtonEnterMainMenu(Point position, Texture2D texture) : base(position, texture, text)
-        {
-        }
-        public ButtonEnterMainMenu() : base(text)
-        {
-        }
-        public ButtonEnterMainMenu(Point position) : base(position, text)
-        {
-        }
 
-        public override void Action()
-        {
-            Game.ChangeScreen(Screen.MainMenu);
-        }
-    }
 
-    public class ButtonMapEditorSelectTile : Button
-    {
-        int textureIndex;
-        string tile;
-        public string Tile
-        {
-            get { return tile; }
-            set
-            {
-                tile = value;
-                texture = Art.Textures[tile];
-            }
-        }
-        public ButtonMapEditorSelectTile(Point position, string tile, int textureIndex) : base("")
-        {
-            this.tile = tile;
-            this.textureIndex = textureIndex;
-            Initialize(position, Art.Textures[tile]);
-            Resize();
-        }
-        public override void Action()
-        {
-            MapEditor.ChangeSelectedTile(tile, rectangle.Location,textureIndex);
-        }
 
-        void Resize()
-        {
-            rectangle.Width *= 2;
-            rectangle.Height *= 2;
-        }
-    }
 
-    public class ButtonMapEditorSaveMap : Button
-    {
-        new static string text = "Save Map";
-        public ButtonMapEditorSaveMap(Point position, Texture2D texture) : base(position, texture, text)
-        {
-        }
-        public ButtonMapEditorSaveMap() : base(text)
-        {
-        }
 
-        public override void Action()
-        {
-            MapEditor.IsSaving = true;
-            KeyboardExtension.StartReadingInput();
-        }
-    }
+    //public class ButtonEnterMapEditor : Button
+    //{
+    //    new static string text = "Map Editor";
+    //    public ButtonEnterMapEditor(Point position, Texture2D texture) : base(position, texture, text)
+    //    {
+    //    }
+    //    public ButtonEnterMapEditor() : base(text)
+    //    {
+    //    }
 
-    public class ButtonMapEditorLoadMap : Button
-    {
-        new static string text = "Load Map";
-        public ButtonMapEditorLoadMap(Point position, Texture2D texture) : base(position, texture, text)
-        {
-        }
-        public ButtonMapEditorLoadMap() : base(text)
-        {
-        }
+    //    public override void Action()
+    //    {
+    //        Game.ChangeScreen(Screen.MapEditor);
+    //    }
+    //}
 
-        public override void Action()
-        {
-            MapEditor.IsLoading = true;
-            KeyboardExtension.StartReadingInput();
-        }
-    }
 
-    public class ButtonPlayLoadMap : Button
-    {
-        new static string text = "Load Map";
-        public ButtonPlayLoadMap(Point position, Texture2D texture) : base(position, texture, text)
-        {
-        }
-        public ButtonPlayLoadMap() : base(text)
-        {
-        }
-        public ButtonPlayLoadMap(Point position) : base(position, text)
-        {
-        }
 
-        public override void Action()
-        {
-            Game.map.LoadMap(Play.MapList.SelectedString);
-            Play.ChangeScreen(PlayScreen.Game);
-        }
-    }
+
+
+    //public class ButtonMapEditorSelectTile : Button
+    //{
+    //    int textureIndex;
+    //    string tile;
+    //    public string Tile
+    //    {
+    //        get { return tile; }
+    //        set
+    //        {
+    //            tile = value;
+    //            texture = Art.Textures[tile];
+    //        }
+    //    }
+    //    public ButtonMapEditorSelectTile(Point position, string tile, int textureIndex) : base("")
+    //    {
+    //        this.tile = tile;
+    //        this.textureIndex = textureIndex;
+    //        Initialize(position, Art.Textures[tile]);
+    //        Resize();
+    //    }
+    //    public override void Action()
+    //    {
+    //        MapEditor.ChangeSelectedTile(tile, rectangle.Location,textureIndex);
+    //    }
+
+    //    void Resize()
+    //    {
+    //        rectangle.Width *= 2;
+    //        rectangle.Height *= 2;
+    //    }
+    //}
+
+    //public class ButtonMapEditorSaveMap : Button
+    //{
+    //    new static string text = "Save Map";
+    //    public ButtonMapEditorSaveMap(Point position, Texture2D texture) : base(position, texture, text)
+    //    {
+    //    }
+    //    public ButtonMapEditorSaveMap() : base(text)
+    //    {
+    //    }
+
+    //    public override void Action()
+    //    {
+    //        MapEditor.IsSaving = true;
+    //        KeyboardExtension.StartReadingInput();
+    //    }
+    //}
+
+    //public class ButtonMapEditorLoadMap : Button
+    //{
+    //    new static string text = "Load Map";
+    //    public ButtonMapEditorLoadMap(Point position, Texture2D texture) : base(position, texture, text)
+    //    {
+    //    }
+    //    public ButtonMapEditorLoadMap() : base(text)
+    //    {
+    //    }
+
+    //    public override void Action()
+    //    {
+    //        MapEditor.IsLoading = true;
+    //        KeyboardExtension.StartReadingInput();
+    //    }
+    //}
+
+    //public class ButtonPlayLoadMap : Button
+    //{
+    //    new static string text = "Load Map";
+    //    public ButtonPlayLoadMap(Point position, Texture2D texture) : base(position, texture, text)
+    //    {
+    //    }
+    //    public ButtonPlayLoadMap() : base(text)
+    //    {
+    //    }
+    //    public ButtonPlayLoadMap(Point position) : base(position, text)
+    //    {
+    //    }
+
+    //    public override void Action()
+    //    {
+    //        Game.map.LoadMap(Play.MapList.SelectedString);
+    //        Play.ChangeScreen(PlayScreen.Game);
+    //    }
+    //}
 }

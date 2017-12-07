@@ -55,7 +55,7 @@ namespace StrategyGame
             this.Size = Size;
             this.Selectable = Selectable;
             this.LayerDepth = LayerDepth;
-            Texture = Name == "Text" ? null : Art.Textures[Name];
+            Texture = Name == "Text" || Name == "Selector List" ? null : Art.Textures[Name];
         }
     }
 

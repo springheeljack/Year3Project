@@ -44,9 +44,11 @@ namespace StrategyGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Art.LoadContent(Content);
+            Map.Initialize();
 
             ButtonBase.Initialize();
             TextBase.Initialize();
+            SelectorListBase.Initialize();
             ScreenBase.Initialize();
             UnitBase.Initialize();
             BuildingBase.Initialize();

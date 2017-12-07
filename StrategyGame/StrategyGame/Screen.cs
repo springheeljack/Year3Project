@@ -39,7 +39,9 @@ namespace StrategyGame
             //Play Menu Load Map
             list = new List<Entity>
             {
+                new SelectorList(SelectorListBase.Dictionary["Standard"],new Vector2(200,100),Map.MapList),
                 new Text(TextBase.Dictionary["Standard"],new Vector2(640,50),"Load Map"),
+                new Button(ButtonBase.Bases["Standard"],new Vector2(100,100),"PlayMenuLoadMap", "Load"),
                 new Button(ButtonBase.Bases["Standard"],new Vector2(100,200),"GotoPlayMenu", "Back")
             };
             Dictionary.Add("Play Menu Load Map", new ScreenBase(list, "Screen"));
@@ -62,6 +64,13 @@ namespace StrategyGame
                 new Button(ButtonBase.Bases["Standard"], new Vector2(100, 300), "GotoMapEditorMenu", "Back")
             };
             Dictionary.Add("Map Editor New Map", new ScreenBase(list, "Screen"));
+
+            //Play
+            list = new List<Entity>
+            {
+
+            };
+            Dictionary.Add("Play", new ScreenBase(list, "Screen"));
         }
         public ScreenBase(List<Entity> ScreenEntities, string Name) : base(typeof(Screen), Name, new Point(1280, 720), false, LayerDepth)
         {

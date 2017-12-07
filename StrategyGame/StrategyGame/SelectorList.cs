@@ -40,7 +40,7 @@ namespace StrategyGame
     //    {
     //        Vector2 pos = Position.ToVector2();
 
-    //        for (int i = 0; i < List.Count;i++)
+    //        for (int i = 0; i < List.Count; i++)
     //        {
     //            Color color = i == SelectedIndex ? Color.LightGray : Color.Black;
     //            spriteBatch.DrawString(Art.SpriteFont, List[i], pos, color);
@@ -51,11 +51,49 @@ namespace StrategyGame
 
     public class SelectorList : Entity
     {
+        static Color Black { get; } = Color.Black;
+        static Color Lime { get; } = Color.Lime;
 
+        public List<string> Strings { get; }
+        new SelectorListBase Base { get { return base.Base as SelectorListBase; } }
+        int Selected { get; set; } = -1;
+        public string GetSelected() { return Strings[Selected]; }
+        public SelectorList(SelectorListBase Base, Vector2 Position, List<string> Strings) : base(Base, Position)
+        {
+            this.Strings = Strings;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            if (Input.MouseState.IsLeftClicked())
+                for (int i = 0; i < Strings.Count; i++)
+                {
+                    Rectangle rect = new Rectangle((Position + new Vector2(0.0f, Base.Spacing*i)).ToPoint(), Base.SpriteFont.MeasureString(Strings[i]).ToPoint());
+                    if (rect.Intersects(Input.MouseRectangle))
+                        Selected = i;
+                }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            for (int i = 0; i < Strings.Count; i++)
+                spriteBatch.DrawString(Base.SpriteFont, Strings[i], Position + new Vector2(0.0f, Base.Spacing * i), i == Selected ? Lime : Black);
+        }
     }
 
     public class SelectorListBase : EntityBase
     {
-
+        public static Dictionary<string, SelectorListBase> Dictionary = new Dictionary<string, SelectorListBase>();
+        public float Spacing { get; }
+        public SpriteFont SpriteFont { get; }
+        public SelectorListBase(SpriteFont SpriteFont, float Spacing) : base(typeof(SelectorList), "Selector List", Point.Zero, false, 0.96f)
+        {
+            this.SpriteFont = SpriteFont;
+            this.Spacing = Spacing;
+        }
+        public static void Initialize()
+        {
+            Dictionary.Add("Standard", new SelectorListBase(Art.SpriteFont, 40.0f));
+        }
     }
 }

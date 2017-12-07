@@ -23,6 +23,7 @@ namespace StrategyGame
             Actions.Add("GotoPlayMenuLoadMap", GotoPlayMenuLoadMap);
             Actions.Add("GotoMapEditorMenu", GotoMapEditorMenu);
             Actions.Add("GotoMapEditorNewMap", GotoMapEditorNewMap);
+            Actions.Add("PlayMenuLoadMap", PlayMenuLoadMap);
         }
 
         //Actions
@@ -54,6 +55,12 @@ namespace StrategyGame
         {
             Game.Screen.Remove();
             Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor New Map"]);
+        }
+        private static void PlayMenuLoadMap()
+        {
+            Map.LoadMap(((Game.Screen.Base as ScreenBase).ScreenEntities.Find(x => x is SelectorList) as SelectorList).GetSelected());
+            //Game.Screen.Remove();
+            //Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor New Map"]);
         }
 
         public ButtonBase(Point Size) : base(typeof(Button), Name, Size, false, LayerDepth) { }

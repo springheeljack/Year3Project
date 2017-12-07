@@ -29,7 +29,7 @@ namespace StrategyGame
             List<string> fileNames = new List<string>();
             foreach (FileInfo fi in files)
                 fileNames.Add(Path.GetFileNameWithoutExtension(fi.Name));
-            MapList = new SelectorList(fileNames, new Point(100, 100));
+            //MapList = new SelectorList(fileNames, new Point(100, 100));
 
             //PlayButtons.Add(new ButtonPlayLoadMap(new Point(600, 100)));
             //PlayButtons.Add(new ButtonEnterMainMenu(new Point(600, 200)));
@@ -49,7 +49,7 @@ namespace StrategyGame
             switch (Screen)
             {
                 case PlayScreen.MapList:
-                    MapList.Update();
+                    MapList.Update(gameTime);
                     //foreach (Button b in PlayButtons)
                     //    b.Update();
                     break;

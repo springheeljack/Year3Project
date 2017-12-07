@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.IO;
 
 namespace StrategyGame
 {
@@ -9,6 +11,23 @@ namespace StrategyGame
         static int width, height;
         public static int Width { get { return width; } }
         public static int Height { get { return height; } }
+        public static List<string> MapList { get; } = new List<string>();
+
+        public static void Initialize()
+        {
+            UpdateMapList();
+        }
+
+        public static void UpdateMapList()
+        {
+            MapList.Clear();
+            foreach (string file in Directory.GetFiles("Content/Map"))
+            {
+                //string s = TexturePath + "/" + Path.GetFileName(dir) + "/" + Path.GetFileNameWithoutExtension(file);
+                //Textures.Add(Path.GetFileNameWithoutExtension(file), Content.Load<Texture2D>(s));
+                MapList.Add(Path.GetFileNameWithoutExtension(file));
+            }
+        }
 
         public static bool LoadMap(string filePath)
         {   if (!System.IO.File.Exists("Content/Map/" + filePath + ".sgmap"))

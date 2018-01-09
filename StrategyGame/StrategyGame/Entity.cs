@@ -24,11 +24,18 @@ namespace StrategyGame
         }
         public virtual void Update(GameTime gameTime)
         {
+            if (Input.MouseState.IsLeftClicked() && Input.MouseRectangle.Intersects(Rectangle))
+                if (this is Building || this is Unit)
+                    Game.SelectedEntity = this;
+
             UpdateRectangle();
         }
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Base.Texture, Rectangle, null, Color, 0.0f, Vector2.Zero, SpriteEffects.None, Base.LayerDepth);
+
+            if (Game.SelectedEntity == this)
+                spriteBatch.Draw(Art.Textures["Reticle"], Rectangle, null, Color, 0.0f, Vector2.Zero, SpriteEffects.None, Game.SelectedLayerDepth);
         }
         void UpdateRectangle()
         {

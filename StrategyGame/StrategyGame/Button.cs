@@ -59,7 +59,7 @@ namespace StrategyGame
         private static void PlayMenuLoadMap()
         {
             Map.LoadMap(((Game.Screen.Base as ScreenBase).ScreenEntities.Find(x => x is SelectorList) as SelectorList).GetSelected());
-            //Game.Screen.Remove();
+            Game.Screen.Remove();
             //Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor New Map"]);
         }
 

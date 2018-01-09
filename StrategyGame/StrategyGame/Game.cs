@@ -21,6 +21,9 @@ namespace StrategyGame
         SpriteBatch spriteBatch;
         public static Screen Screen;
 
+        public static Entity SelectedEntity = null;
+        public static float SelectedLayerDepth = 0.97f;
+
         public Game()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -85,6 +88,8 @@ namespace StrategyGame
 
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, null);
 
+            if (Map.Loaded)
+                Map.Draw(spriteBatch);
 
             EntityManager.Draw(spriteBatch);
 

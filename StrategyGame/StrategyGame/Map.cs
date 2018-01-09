@@ -12,6 +12,7 @@ namespace StrategyGame
         public static int Width { get { return width; } }
         public static int Height { get { return height; } }
         public static List<string> MapList { get; } = new List<string>();
+        public static bool Loaded { get; private set; } = false;
 
         public static void Initialize()
         {
@@ -67,6 +68,9 @@ namespace StrategyGame
                 temp = "";
             }
 
+            EntityManager.ToAdd.Add(new BuildingTownCenter(BuildingBase.Dictionary["Town Center"], new Vector2(100)));
+
+            Loaded = true;
             return true;
         }
 

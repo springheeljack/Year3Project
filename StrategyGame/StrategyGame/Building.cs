@@ -11,15 +11,15 @@ namespace StrategyGame
         public static Dictionary<string, BuildingBase> Dictionary = new Dictionary<string, BuildingBase>();
         public int MaxHealth { get; }
         public bool Depositable { get; }
-        public BuildingBase(Type BuildingType, string Name, Point Size, int MaxHealth,bool Depositable,bool Selectable) : base(BuildingType, Name, Size,Selectable,LayerDepth)
+        public BuildingBase(Type BuildingType, string Name, Point Size, int MaxHealth, bool Depositable, bool Selectable) : base(BuildingType, Name, Size, Selectable, LayerDepth)
         {
             this.MaxHealth = MaxHealth;
             this.Depositable = Depositable;
         }
         public static void Initialize()
         {
-            Dictionary.Add("Town Center", new BuildingBase(typeof(BuildingTownCenter), "Town Center", new Point(128), 1000,true,true));
-            Dictionary.Add("Stockpile", new BuildingBase(typeof(BuildingStockpile), "Stockpile", new Point(32), 100,true,true));
+            Dictionary.Add("Town Center", new BuildingBase(typeof(BuildingTownCenter), "Town Center", new Point(128), 1000, true, true));
+            Dictionary.Add("Stockpile", new BuildingBase(typeof(BuildingStockpile), "Stockpile", new Point(32), 100, true, true));
         }
     }
 
@@ -29,7 +29,7 @@ namespace StrategyGame
         public int MaxHealth { get { return (Base as BuildingBase).MaxHealth; } }
         public IAttacker LastAttacker { get; set; }
 
-        public Building(BuildingBase Base, Vector2 Position) : base(Base,Position)
+        public Building(BuildingBase Base, Vector2 Position) : base(Base, Position)
         {
             Health = MaxHealth;
         }
@@ -43,7 +43,7 @@ namespace StrategyGame
 
     public class BuildingStockpile : Building
     {
-        public static List< Recipe> Recipes { get; set; } = new List<Recipe>();
+        public static List<Recipe> Recipes { get; set; } = new List<Recipe>();
         public BuildingStockpile(BuildingBase Base, Vector2 Position) : base(Base, Position)
         {
         }
@@ -78,7 +78,7 @@ namespace StrategyGame
     {
         public static void Deposit(this Building building, IGatherer Gatherer)
         {
-            Play.Resources += Gatherer.CarriedResources;
+            Game.Resources += Gatherer.CarriedResources;
             Gatherer.CarriedResources = 0;
         }
     }

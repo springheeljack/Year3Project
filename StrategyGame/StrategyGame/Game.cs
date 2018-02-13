@@ -23,6 +23,7 @@ namespace StrategyGame
 
         public static Entity SelectedEntity = null;
         public static float SelectedLayerDepth = 0.97f;
+        public static int Resources = 1000;
 
         public Game()
         {

@@ -59,6 +59,11 @@ namespace StrategyGame
         private static void PlayMenuLoadMap()
         {
             Map.LoadMap(((Game.Screen.Base as ScreenBase).ScreenEntities.Find(x => x is SelectorList) as SelectorList).GetSelected());
+            EntityManager.ToAdd.Add(new UnitGatherer(UnitBaseGatherer.Dictionary["Miner"], new Vector2(70, 100)));
+            EntityManager.ToAdd.Add(new UnitGatherer(UnitBaseGatherer.Dictionary["Miner"], new Vector2(100, 100)));
+            EntityManager.ToAdd.Add(new UnitGatherer(UnitBaseGatherer.Dictionary["Miner"], new Vector2(130, 100)));
+            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Dictionary["Iron Rock"], new Vector2(400)));
+            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Dictionary["Iron Rock"], new Vector2(432)));
             Game.Screen.Remove();
             //Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor New Map"]);
         }

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StrategyGame
 {
@@ -27,7 +28,7 @@ namespace StrategyGame
         new static readonly float LayerDepth = 0.6f;
         public int MaxHealth { get; }
         public float Speed { get; }
-        public UnitBase(Type UnitType, string Name, Point Size, int MaxHealth, float Speed, bool Selectable) : base(UnitType, Name, Size, Selectable,LayerDepth)
+        public UnitBase(Type UnitType, string Name, Point Size, int MaxHealth, float Speed, bool Selectable) : base(UnitType, Name, Size, Selectable, LayerDepth)
         {
             this.MaxHealth = MaxHealth;
             this.Speed = Speed;
@@ -199,6 +200,41 @@ namespace StrategyGame
         public UnitGatherer(UnitBaseGatherer Base, Vector2 Position) : base(Base, Position) { }
         public override void Update(GameTime gameTime)
         {
+            if (Game.SelectedEntity == this)
+            {
+                if (Input.IsRightClicked(Input.MouseState))
+                {
+                    //HasDestination = true;
+                    //Destination = Input.MouseState.Position.ToVector2();
+                    if (CarriedResources < Base.MaxCapacity)
+                    {
+                        foreach (ResourceNode r in EntityManager.Entities.OfType<ResourceNode>())
+                            if (MouseExtension.Rectangle.Intersects(r.Rectangle))
+                            {
+                                GatherTarget = r;
+                                HasDestination = false;
+                            }
+                    }
+                    foreach (Building b in EntityManager.Entities.OfType<Building>().Where(n => (n.Base as BuildingBase).Depositable))
+                        if (MouseExtension.Rectangle.Intersects(b.Rectangle))
+                        {
+                            DepositTarget = b;
+                            HasDestination = false;
+                        }
+                    if (HasDestination == false && DepositTarget == null && GatherTarget == null && CurrentTarget == null)
+                    {
+                        HasDestination = true;
+                        Destination = Input.MouseState.Position.ToVector2();
+                    }
+                    if (HasDestination == true)
+                    {
+                        DepositTarget = null;
+                        GatherTarget = null;
+                        CurrentTarget = null;
+                    }
+                }
+            }
+
             if (GatherTarget != null && !GatherTarget.Gatherable)
             {
                 GatherTarget = null;

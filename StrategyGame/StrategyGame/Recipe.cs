@@ -40,7 +40,7 @@ namespace StrategyGame
         public int Cost { get; }
         public void Complete(Vector2 Position)
         {
-            Play.Resources -= Cost;
+            Game.Resources -= Cost;
             EntityManager.Entities.Add(Activator.CreateInstance(Output.EntityType, Output, Position) as Entity);
         }
     }

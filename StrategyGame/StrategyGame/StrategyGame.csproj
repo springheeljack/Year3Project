@@ -76,11 +76,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Texture\Building\Stockpile.png" />
+    <Content Include="Content\Texture\Building\Town Center.png" />
+    <Content Include="Content\Texture\ResourceNode\Iron Rock.png" />
+    <Content Include="Content\Texture\ResourceNode\Tree.png" />
+    <Content Include="Content\Texture\Tile\Grass.png" />
+    <Content Include="Content\Texture\Tile\Test.png" />
+    <Content Include="Content\Texture\Tile\Water.png" />
+    <Content Include="Content\Texture\UI\Button.png" />
+    <Content Include="Content\Texture\UI\Fade.png" />
+    <Content Include="Content\Texture\UI\Flag.png" />
+    <Content Include="Content\Texture\UI\GreenFlag.png" />
+    <Content Include="Content\Texture\UI\Reticle.png" />
+    <Content Include="Content\Texture\UI\Screen.png" />
+    <Content Include="Content\Texture\UI\Selector.png" />
+    <Content Include="Content\Texture\Unit\Builder.png" />
+    <Content Include="Content\Texture\Unit\Creep.png" />
+    <Content Include="Content\Texture\Unit\Miner.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+    <None Include="Content\Font\spriteFont.spritefont">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Content\Map\ISLAND.sgmap">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

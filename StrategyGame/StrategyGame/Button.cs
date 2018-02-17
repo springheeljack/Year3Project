@@ -5,95 +5,97 @@ using System.Collections.Generic;
 
 namespace StrategyGame
 {
-    public class ButtonBase : EntityBase
-    {
-        new static readonly float LayerDepth = 0.9f;
-        public static Dictionary<string, ButtonBase> Bases = new Dictionary<string, ButtonBase>();
-        public static Dictionary<string, Action> Actions = new Dictionary<string, Action>();
-        new static string Name = "Button";
-        public static void Initialize()
-        {
-            //Bases
-            Bases.Add("Standard", new ButtonBase(new Point(160, 80)));
 
-            //Actions
-            Actions.Add("Quit", Quit);
-            Actions.Add("GotoPlayMenu", GotoPlayMenu);
-            Actions.Add("GotoMainMenu", GotoMainMenu);
-            Actions.Add("GotoPlayMenuLoadMap", GotoPlayMenuLoadMap);
-            Actions.Add("GotoMapEditorMenu", GotoMapEditorMenu);
-            Actions.Add("GotoMapEditorNewMap", GotoMapEditorNewMap);
-            Actions.Add("PlayMenuLoadMap", PlayMenuLoadMap);
-        }
+}
+    //public class ButtonBase : EntityBase
+    //{
+    //    new static readonly float LayerDepth = 0.9f;
+    //    public static Dictionary<string, ButtonBase> Bases = new Dictionary<string, ButtonBase>();
+    //    public static Dictionary<string, Action> Actions = new Dictionary<string, Action>();
+    //    new static string Name = "Button";
+    //    public static void Initialize()
+    //    {
+    //        //Bases
+    //        Bases.Add("Standard", new ButtonBase(new Point(160, 80)));
 
-        //Actions
-        private static void Quit()
-        {
-            Game.Quit = true;
-        }
-        private static void GotoPlayMenu()
-        {
-            Game.Screen.Remove();
-            Game.Screen = new Screen(ScreenBase.Dictionary["Play Menu"]);
-        }
-        private static void GotoPlayMenuLoadMap()
-        {
-            Game.Screen.Remove();
-            Game.Screen = new Screen(ScreenBase.Dictionary["Play Menu Load Map"]);
-        }
-        private static void GotoMainMenu()
-        {
-            Game.Screen.Remove();
-            Game.Screen = new Screen(ScreenBase.Dictionary["Main Menu"]);
-        }
-        private static void GotoMapEditorMenu()
-        {
-            Game.Screen.Remove();
-            Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor Menu"]);
-        }
-        private static void GotoMapEditorNewMap()
-        {
-            Game.Screen.Remove();
-            Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor New Map"]);
-        }
-        private static void PlayMenuLoadMap()
-        {
-            Map.LoadMap(((Game.Screen.Base as ScreenBase).ScreenEntities.Find(x => x is SelectorList) as SelectorList).GetSelected());
-            EntityManager.ToAdd.Add(new UnitGatherer(UnitBaseGatherer.Dictionary["Miner"], new Vector2(70, 100)));
-            EntityManager.ToAdd.Add(new UnitGatherer(UnitBaseGatherer.Dictionary["Miner"], new Vector2(100, 100)));
-            EntityManager.ToAdd.Add(new UnitGatherer(UnitBaseGatherer.Dictionary["Miner"], new Vector2(130, 100)));
-            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Dictionary["Iron Rock"], new Vector2(400)));
-            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Dictionary["Iron Rock"], new Vector2(432)));
-            Game.Screen.Remove();
-            //Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor New Map"]);
-        }
+    //        //Actions
+    //        Actions.Add("Quit", Quit);
+    //        Actions.Add("GotoPlayMenu", GotoPlayMenu);
+    //        Actions.Add("GotoMainMenu", GotoMainMenu);
+    //        Actions.Add("GotoPlayMenuLoadMap", GotoPlayMenuLoadMap);
+    //        Actions.Add("GotoMapEditorMenu", GotoMapEditorMenu);
+    //        Actions.Add("GotoMapEditorNewMap", GotoMapEditorNewMap);
+    //        Actions.Add("PlayMenuLoadMap", PlayMenuLoadMap);
+    //    }
 
-        public ButtonBase(Point Size) : base(typeof(Button), Name, Size, false, LayerDepth) { }
-    }
+    //    //Actions
+    //    private static void Quit()
+    //    {
+    //        Game.Quit = true;
+    //    }
+    //    private static void GotoPlayMenu()
+    //    {
+    //        Game.Screen.Remove();
+    //        Game.Screen = new Screen(ScreenBase.Dictionary["Play Menu"]);
+    //    }
+    //    private static void GotoPlayMenuLoadMap()
+    //    {
+    //        Game.Screen.Remove();
+    //        Game.Screen = new Screen(ScreenBase.Dictionary["Play Menu Load Map"]);
+    //    }
+    //    private static void GotoMainMenu()
+    //    {
+    //        Game.Screen.Remove();
+    //        Game.Screen = new Screen(ScreenBase.Dictionary["Main Menu"]);
+    //    }
+    //    private static void GotoMapEditorMenu()
+    //    {
+    //        Game.Screen.Remove();
+    //        Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor Menu"]);
+    //    }
+    //    private static void GotoMapEditorNewMap()
+    //    {
+    //        Game.Screen.Remove();
+    //        Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor New Map"]);
+    //    }
+    //    private static void PlayMenuLoadMap()
+    //    {
+    //        Map.LoadMap(((Game.Screen.Base as ScreenBase).ScreenEntities.Find(x => x is SelectorList) as SelectorList).GetSelected());
+    //        EntityManager.ToAdd.Add(new UnitGatherer(UnitBaseGatherer.Dictionary["Miner"], new Vector2(70, 100)));
+    //        EntityManager.ToAdd.Add(new UnitGatherer(UnitBaseGatherer.Dictionary["Miner"], new Vector2(100, 100)));
+    //        EntityManager.ToAdd.Add(new UnitGatherer(UnitBaseGatherer.Dictionary["Miner"], new Vector2(130, 100)));
+    //        EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Dictionary["Iron Rock"], new Vector2(400)));
+    //        EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Dictionary["Iron Rock"], new Vector2(432)));
+    //        Game.Screen.Remove();
+    //        //Game.Screen = new Screen(ScreenBase.Dictionary["Map Editor New Map"]);
+    //    }
 
-    public class Button : Entity
-    {
-        string Text;
-        public Action Action;
-        public Button(ButtonBase Base,Vector2 Position,string Action,string Text) : base(Base, Position)
-        {
-            this.Action = ButtonBase.Actions[Action];
-            this.Text = Text;
-        }
-        public override void Update(GameTime gameTime)
-        {
-            if (Input.MouseState.IsLeftClicked() && Input.MouseRectangle.Intersects(Rectangle))
-                Action();
+    //    public ButtonBase(Point Size) : base(typeof(Button), Name, Size, false, LayerDepth) { }
+    //}
 
-            base.Update(gameTime);
-        }
+    //public class Button : Entity
+    //{
+    //    string Text;
+    //    public Action Action;
+    //    public Button(ButtonBase Base,Vector2 Position,string Action,string Text) : base(Base, Position)
+    //    {
+    //        this.Action = ButtonBase.Actions[Action];
+    //        this.Text = Text;
+    //    }
+    //    public override void Update(GameTime gameTime)
+    //    {
+    //        if (Input.MouseState.IsLeftClicked() && Input.MouseRectangle.Intersects(Rectangle))
+    //            Action();
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.DrawString(Art.SpriteFont, Text, Art.CenterString(Rectangle, Art.SpriteFont, Text), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-            base.Draw(spriteBatch);
-        }
-    }
+    //        base.Update(gameTime);
+    //    }
+
+    //    public override void Draw(SpriteBatch spriteBatch)
+    //    {
+    //        spriteBatch.DrawString(Art.SpriteFont, Text, Art.CenterString(Rectangle, Art.SpriteFont, Text), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+    //        base.Draw(spriteBatch);
+    //    }
+    //}
 
     ////public abstract class Button
     ////{
@@ -246,4 +248,3 @@ namespace StrategyGame
     //        Play.ChangeScreen(PlayScreen.Game);
     //    }
     //}
-}

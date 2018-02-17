@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace StrategyGame
 {
-    public enum PlayScreen
-    {
-        MapList,
-        Game
-    }
+    //public enum PlayScreen
+    //{
+    //    MapList,
+    //    Game
+    //}
 
     //public static class Play
     //{

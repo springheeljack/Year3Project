@@ -5,10 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StrategyGame
+
+public static class Global
 {
-    public interface IRectangleObject
-    {
-        Rectangle Rectangle { get; set; }
-    }
+    public static GameTime gameTime;
 }

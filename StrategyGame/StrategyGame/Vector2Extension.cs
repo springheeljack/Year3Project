@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace StrategyGame
 {
-    public static class PointExtension
+    public static class Vector2Extension
     {
-        public static Point Half (this Point p)
+        public static float Distance(this Vector2 v1, Vector2 v2)
         {
-            return new Point(p.X / 2, p.Y / 2);
+            return (v2 - v1).Length();
         }
     }
 }

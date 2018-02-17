@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace StrategyGame
 {
-    public interface IRectangleObject
+    public interface IFSMState
     {
-        Rectangle Rectangle { get; set; }
+        void Update(FSM fsm, GOAPAgent agent);
     }
 }

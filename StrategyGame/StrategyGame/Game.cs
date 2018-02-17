@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace StrategyGame
 {
@@ -19,11 +20,11 @@ namespace StrategyGame
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        public static Screen Screen;
+        //public static Screen Screen;
 
         public static Entity SelectedEntity = null;
         public static float SelectedLayerDepth = 0.97f;
-        public static int Resources = 1000;
+        //public static int Resources = 1000;
 
         public Game()
         {
@@ -49,17 +50,31 @@ namespace StrategyGame
 
             Art.LoadContent(Content);
             Map.Initialize();
-
-            ButtonBase.Initialize();
-            TextBase.Initialize();
-            SelectorListBase.Initialize();
-            ScreenBase.Initialize();
+            Map.LoadMap("ISLAND");
             UnitBase.Initialize();
             BuildingBase.Initialize();
             ResourceNodeBase.Initialize();
-            Recipe.Initialize();
 
-            Screen = new Screen(ScreenBase.Dictionary["Main Menu"]);
+            //ButtonBase.Initialize();
+            //TextBase.Initialize();
+            //SelectorListBase.Initialize();
+            //ScreenBase.Initialize();
+            //UnitBase.Initialize();
+            //BuildingBase.Initialize();
+            //ResourceNodeBase.Initialize();
+            //Recipe.Initialize();
+
+            EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Stockpile"], new Vector2(200)));
+            EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Forge"], new Vector2(200, 400)));
+            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Tree"], new Vector2(300)));
+            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Tree"], new Vector2(350)));
+            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Tree"], new Vector2(400)));
+            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Sticks"], new Vector2(300,200)));
+            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Sticks"], new Vector2(200,300)));
+            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Sticks"], new Vector2(100, 500)));
+            EntityManager.ToAdd.Add(new Unit(UnitBase.Bases["Woodcutter"], new Vector2(100)));
+            EntityManager.ToAdd.Add(new Unit(UnitBase.Bases["Blacksmith"], new Vector2(100, 200)));
+
         }
 
         protected override void UnloadContent()
@@ -69,6 +84,9 @@ namespace StrategyGame
 
         protected override void Update(GameTime gameTime)
         {
+            //Globals
+            Global.gameTime = gameTime;
+
             //Input
             MouseExtension.Update();
             KeyboardExtension.Update();
@@ -87,7 +105,7 @@ namespace StrategyGame
         {
             GraphicsDevice.Clear(Color.Magenta);
 
-            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, null);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, null);
 
             if (Map.Loaded)
                 Map.Draw(spriteBatch);

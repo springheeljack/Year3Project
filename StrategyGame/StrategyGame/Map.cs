@@ -68,8 +68,6 @@ namespace StrategyGame
                 temp = "";
             }
 
-            EntityManager.ToAdd.Add(new BuildingTownCenter(BuildingBase.Dictionary["Town Center"], new Vector2(100)));
-
             Loaded = true;
             return true;
         }

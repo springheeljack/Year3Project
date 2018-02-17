@@ -41,15 +41,29 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Actions\CreateAxe.cs" />
+    <Compile Include="Actions\GatherSticks.cs" />
+    <Compile Include="Actions\GatherTree.cs" />
+    <Compile Include="Actions\PickUpLog.cs" />
+    <Compile Include="Actions\StoreAxe.cs" />
+    <Compile Include="Actions\StoreLog.cs" />
     <Compile Include="Building.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Global.cs" />
+    <Compile Include="GOAP\FSM.cs" />
+    <Compile Include="GOAP\IFSMState.cs" />
+    <Compile Include="GOAP\GOAPAction.cs" />
+    <Compile Include="GOAP\GOAPAgent.cs" />
+    <Compile Include="GOAP\GOAPPlanner.cs" />
+    <Compile Include="GOAP\IGOAP.cs" />
     <Compile Include="IAttacker.cs" />
     <Compile Include="IGatherer.cs" />
     <Compile Include="IHealth.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="IRectangleObject.cs" />
+    <Compile Include="Inventory.cs" />
     <Compile Include="KeyboardExtension.cs" />
     <Compile Include="MainMenu.cs" />
     <Compile Include="Map.cs" />
@@ -67,6 +81,7 @@
     <Compile Include="Text.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="Unit.cs" />
+    <Compile Include="Vector2Extension.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

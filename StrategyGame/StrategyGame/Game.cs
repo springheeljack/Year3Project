@@ -72,8 +72,12 @@ namespace StrategyGame
             EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Sticks"], new Vector2(300,200)));
             EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Sticks"], new Vector2(200,300)));
             EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Sticks"], new Vector2(100, 500)));
+            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Iron Rock"], new Vector2(200, 100)));
+
+
             EntityManager.ToAdd.Add(new Unit(UnitBase.Bases["Woodcutter"], new Vector2(100)));
             EntityManager.ToAdd.Add(new Unit(UnitBase.Bases["Blacksmith"], new Vector2(100, 200)));
+            EntityManager.ToAdd.Add(new Unit(UnitBase.Bases["Miner"], new Vector2(100, 300)));
 
         }
 

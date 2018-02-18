@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace StrategyGame.Actions
 {
-    public class StoreAxe : GOAPAction
+    public class StorePickaxe : GOAPAction
     {
         bool Stored = false;
 
-        public StoreAxe()
+        public StorePickaxe()
         {
             Cost = 1;
-            Preconditions.Add("HasAxe", true);
-            Effects.Add("HasAxe", false);
-            Effects.Add("StoreAxe", true);
+            Preconditions.Add("HasPickaxe", true);
+            Effects.Add("HasPickaxe", false);
+            Effects.Add("StorePickaxe", true);
         }
 
         public override bool CheckProceduralPrecondition(GOAPAgent agent)
@@ -59,8 +59,8 @@ namespace StrategyGame.Actions
 
         public override bool Run(Entity entity)
         {
-            (entity as Unit).Inventory.RemoveItem(ItemType.IronAxe);
-            (Target as Building).Inventory.AddItem(ItemType.IronAxe);
+            (entity as Unit).Inventory.RemoveItem(ItemType.IronPickaxe);
+            (Target as Building).Inventory.AddItem(ItemType.IronPickaxe);
 
             Stored = true;
             return true;

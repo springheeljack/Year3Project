@@ -6,24 +6,40 @@ using System.Threading.Tasks;
 
 namespace StrategyGame.Actions
 {
-    public class StoreAxe : GOAPAction
+    public class StoreIronOre : GOAPAction
     {
-        bool Stored = false;
 
-        public StoreAxe()
+        private bool Stored = false;
+
+        public StoreIronOre()
         {
-            Cost = 1;
-            Preconditions.Add("HasAxe", true);
-            Effects.Add("HasAxe", false);
-            Effects.Add("StoreAxe", true);
+            Preconditions.Add("HasIronOre", true);
+            Effects.Add("HasIronOre", false);
+            Effects.Add("StoreIronOre", true);
+        }
+
+        public override void ResetExtra()
+        {
+            Stored = false;
+        }
+
+        public override bool IsDone()
+        {
+            return Stored;
+        }
+
+        public override bool RequiresInRange()
+        {
+            return true;
         }
 
         public override bool CheckProceduralPrecondition(GOAPAgent agent)
         {
-            List<Building> buildings = EntityManager.GetBuildings().Where(x => x.BuildingType == BuildingType.Stockpile).ToList();
+            List<Building> buildings = EntityManager.GetBuildings();
             Building nearest = null;
             float distance = 0;
-            foreach (Building b in buildings)
+            foreach (Building b in buildings.Where(x => x.BuildingType == BuildingType.Stockpile))
+            {
                 if (nearest == null)
                 {
                     nearest = b;
@@ -38,30 +54,15 @@ namespace StrategyGame.Actions
                         distance = tempDistance;
                     }
                 }
+            }
             Target = nearest;
             return nearest != null;
         }
 
-        public override bool IsDone()
-        {
-            return Stored;
-        }
-
-        public override bool RequiresInRange()
-        {
-            return true;
-        }
-
-        public override void ResetExtra()
-        {
-            Stored = false;
-        }
-
         public override bool Run(Entity entity)
         {
-            (entity as Unit).Inventory.RemoveItem(ItemType.IronAxe);
-            (Target as Building).Inventory.AddItem(ItemType.IronAxe);
-
+            (Target as Building).Inventory.AddItem(ItemType.IronOre);
+            (entity as Unit).Inventory.RemoveItem(ItemType.IronOre);
             Stored = true;
             return true;
         }

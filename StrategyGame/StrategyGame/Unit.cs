@@ -9,7 +9,9 @@ namespace StrategyGame
 {
     public enum UnitType
     {
-        Woodcutter
+        Woodcutter,
+        Blacksmith,
+        Miner
     }
 
     public class UnitBase
@@ -26,17 +28,42 @@ namespace StrategyGame
 
         public static void Initialize()
         {
-            List<GOAPAction> Actions = new List<GOAPAction>();
-            Actions.Add(new StoreLog());
-            Actions.Add(new GatherTree());
-            Actions.Add(new GatherSticks());
-            Bases.Add("Woodcutter", new UnitBase(UnitType.Woodcutter, "Woodcutter", new Point(32), Art.Textures["Woodcutter"], 1, 100,Actions));
-            Bases.Add("Miner", new UnitBase(UnitType.Woodcutter, "Miner", new Point(32), Art.Textures["Miner"], 1, 1,new List<GOAPAction>() { new StoreLog(), new GatherTree() }));
-            Bases.Add("Blacksmith", new UnitBase(UnitType.Woodcutter, "Blacksmith", new Point(32), Art.Textures["Blacksmith"], 1, 1, new List<GOAPAction>() { new StoreLog(), new GatherTree() }));
+            //Woodcutter
+            List<GOAPAction> Actions = new List<GOAPAction>
+            {
+                new StoreLog(),
+                new GatherTree(),
+                new GatherSticks(),
+                new PickUpAxe()
+            };
+            Bases.Add("Woodcutter", new UnitBase(UnitType.Woodcutter, "Woodcutter", new Point(32), Art.Textures["Woodcutter"], 10, 100, Actions));
+
+            //Miner
+            Actions = new List<GOAPAction>
+            {
+                new GatherIronOre(),
+                new GatherIronOreWithHands(),
+                new StoreIronOre(),
+                new PickUpPickaxe()
+            };
+            Bases.Add("Miner", new UnitBase(UnitType.Miner, "Miner", new Point(32), Art.Textures["Miner"], 10, 100, Actions));
+
+            //Blacksmith
+            Actions = new List<GOAPAction>
+            {
+                new PickUpLog(),
+                new CreateAxe(),
+                new StoreAxe(),
+                new CreatePickaxe(),
+                new StorePickaxe(),
+                new PickUpIronOre()
+            };
+            Bases.Add("Blacksmith", new UnitBase(UnitType.Blacksmith, "Blacksmith", new Point(32), Art.Textures["Blacksmith"], 10, 50, Actions));
         }
 
-        public UnitBase(UnitType unitType, string name, Point size, Texture2D texture, int inventoryCapacity, float moveSpeed,List<GOAPAction> actions)
+        public UnitBase(UnitType unitType, string name, Point size, Texture2D texture, int inventoryCapacity, float moveSpeed, List<GOAPAction> actions)
         {
+            UnitType = unitType;
             Name = name;
             Size = size;
             Texture = texture;
@@ -48,6 +75,8 @@ namespace StrategyGame
 
     public class Unit : GOAPAgent, IGOAP
     {
+        private float waitTimer = 0;
+        const float waitTime = 1;
         private bool Started = false;
         public Inventory Inventory { get; private set; }
         public float MoveSpeed { get; private set; }
@@ -77,7 +106,10 @@ namespace StrategyGame
         {
             Dictionary<string, object> WorldData = new Dictionary<string, object>
             {
-                { "HasLog", Inventory.Items.Contains(ItemType.Log) }
+                { "HasLog", Inventory.Items.Contains(ItemType.Log) },
+                { "HasAxe", Inventory.Items.Contains(ItemType.IronAxe) },
+                { "HasIronOre", Inventory.Items.Contains(ItemType.IronOre) },
+                { "HasPickaxe", Inventory.Items.Contains(ItemType.IronPickaxe) }
             };
 
             return WorldData;
@@ -93,8 +125,13 @@ namespace StrategyGame
 
         public bool MoveAgent(GOAPAction nextAction)
         {
-            float step = MoveSpeed * (float)Global.gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 delta = nextAction.Target.Position - Position;
+            if (delta.Length() == 0.0f)
+            {
+                nextAction.InRange = true;
+                return true;
+            }
+            float step = MoveSpeed * (float)Global.gameTime.ElapsedGameTime.TotalSeconds;
             delta.Normalize();
             delta *= step;
             Position += delta;
@@ -115,6 +152,13 @@ namespace StrategyGame
             {
                 case UnitType.Woodcutter:
                     goal.Add("StoreLog", true);
+                    break;
+                case UnitType.Blacksmith:
+                    //goal.Add("StoreAxe", true);
+                    goal.Add("StorePickaxe", true);
+                    break;
+                case UnitType.Miner:
+                    goal.Add("StoreIronOre", true);
                     break;
             }
             return goal;

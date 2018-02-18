@@ -42,11 +42,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Actions\CreateAxe.cs" />
+    <Compile Include="Actions\CreatePickaxe.cs" />
+    <Compile Include="Actions\GatherIronOre.cs" />
+    <Compile Include="Actions\GatherIronOreWithHands.cs" />
     <Compile Include="Actions\GatherSticks.cs" />
     <Compile Include="Actions\GatherTree.cs" />
+    <Compile Include="Actions\PickUpAxe.cs" />
+    <Compile Include="Actions\PickUpIronOre.cs" />
     <Compile Include="Actions\PickUpLog.cs" />
+    <Compile Include="Actions\PickUpPickaxe.cs" />
     <Compile Include="Actions\StoreAxe.cs" />
+    <Compile Include="Actions\StoreIronOre.cs" />
     <Compile Include="Actions\StoreLog.cs" />
+    <Compile Include="Actions\StorePickaxe.cs" />
     <Compile Include="Building.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Entity.cs" />

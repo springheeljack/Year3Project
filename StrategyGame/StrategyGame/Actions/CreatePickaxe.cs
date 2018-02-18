@@ -6,21 +6,25 @@ using System.Threading.Tasks;
 
 namespace StrategyGame.Actions
 {
-    public class StoreAxe : GOAPAction
+    public class CreatePickaxe : GOAPAction
     {
-        bool Stored = false;
+        bool Created = false;
+        private double StartTime = 0;
+        public float Duration = 5;
 
-        public StoreAxe()
+        public CreatePickaxe()
         {
-            Cost = 1;
-            Preconditions.Add("HasAxe", true);
-            Effects.Add("HasAxe", false);
-            Effects.Add("StoreAxe", true);
+            Preconditions.Add("HasLog", true);
+            Preconditions.Add("HasIronOre", true);
+            Effects.Add("HasPickaxe", true);
+            Effects.Add("HasLog", false);
+            Effects.Add("HasIronOre", false);
+            Cost = 5;
         }
 
         public override bool CheckProceduralPrecondition(GOAPAgent agent)
         {
-            List<Building> buildings = EntityManager.GetBuildings().Where(x => x.BuildingType == BuildingType.Stockpile).ToList();
+            List<Building> buildings = EntityManager.GetBuildings().Where(x => x.BuildingType == BuildingType.Forge).ToList();
             Building nearest = null;
             float distance = 0;
             foreach (Building b in buildings)
@@ -44,7 +48,7 @@ namespace StrategyGame.Actions
 
         public override bool IsDone()
         {
-            return Stored;
+            return Created;
         }
 
         public override bool RequiresInRange()
@@ -54,15 +58,22 @@ namespace StrategyGame.Actions
 
         public override void ResetExtra()
         {
-            Stored = false;
+            Created = false;
+            StartTime = 0;
         }
 
         public override bool Run(Entity entity)
         {
-            (entity as Unit).Inventory.RemoveItem(ItemType.IronAxe);
-            (Target as Building).Inventory.AddItem(ItemType.IronAxe);
+            if (StartTime == 0)
+                StartTime = Global.gameTime.TotalGameTime.TotalSeconds;
 
-            Stored = true;
+            if (Global.gameTime.TotalGameTime.TotalSeconds - StartTime > Duration)
+            {
+                (entity as Unit).Inventory.AddItem(ItemType.IronPickaxe);
+                (entity as Unit).Inventory.RemoveItem(ItemType.Log);
+                (entity as Unit).Inventory.RemoveItem(ItemType.IronOre);
+                Created = true;
+            }
             return true;
         }
     }

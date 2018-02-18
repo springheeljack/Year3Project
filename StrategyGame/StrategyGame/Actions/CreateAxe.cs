@@ -9,12 +9,16 @@ namespace StrategyGame.Actions
     public class CreateAxe : GOAPAction
     {
         bool Created = false;
+        private double StartTime = 0;
+        public float Duration = 5;
 
         public CreateAxe()
         {
             Preconditions.Add("HasLog", true);
+            Preconditions.Add("HasIronOre", true);
             Effects.Add("HasAxe", true);
             Effects.Add("HasLog", false);
+            Effects.Add("HasIronOre", false);
             Cost = 5;
         }
 
@@ -55,14 +59,21 @@ namespace StrategyGame.Actions
         public override void ResetExtra()
         {
             Created = false;
+            StartTime = 0;
         }
 
         public override bool Run(Entity entity)
         {
-            (entity as Unit).Inventory.AddItem(ItemType.IronAxe);
-            (entity as Unit).Inventory.RemoveItem(ItemType.Log);
+            if (StartTime == 0)
+                StartTime = Global.gameTime.TotalGameTime.TotalSeconds;
 
-            Created = true;
+            if (Global.gameTime.TotalGameTime.TotalSeconds - StartTime > Duration)
+            {
+                (entity as Unit).Inventory.AddItem(ItemType.IronAxe);
+                (entity as Unit).Inventory.RemoveItem(ItemType.Log);
+                (entity as Unit).Inventory.RemoveItem(ItemType.IronOre);
+                Created = true;
+            }
             return true;
         }
     }

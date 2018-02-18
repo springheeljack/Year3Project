@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace StrategyGame.Actions
 {
-    public class GatherTree : GOAPAction
+    public class GatherIronOre : GOAPAction
     {
         private bool Gathered = false;
 
         private double StartTime = 0;
         public float GatherDuration = 2;
 
-        public GatherTree()
+        public GatherIronOre()
         {
-            Preconditions.Add("HasAxe", true);
-            Preconditions.Add("HasLog", false);
-            Effects.Add("HasLog", true);
+            Preconditions.Add("HasPickaxe", true);
+            Preconditions.Add("HasIronOre", false);
+            Effects.Add("HasIronOre", true);
             Cost = 2;
         }
 
@@ -42,7 +42,7 @@ namespace StrategyGame.Actions
             List<ResourceNode> resourceNodes = EntityManager.GetResourceNodes();
             ResourceNode nearest = null;
             float distance = 0;
-            foreach (ResourceNode rn in resourceNodes.Where(x => x.ResourceNodeType == ResourceNodeType.Tree))
+            foreach (ResourceNode rn in resourceNodes.Where(x => x.ResourceNodeType == ResourceNodeType.IronRock))
             {
                 if (nearest == null)
                 {
@@ -71,7 +71,7 @@ namespace StrategyGame.Actions
             if (Global.gameTime.TotalGameTime.TotalSeconds - StartTime > GatherDuration)
             {
                 //Finished Gathering
-                (entity as Unit).Inventory.AddItem(ItemType.Log);
+                (entity as Unit).Inventory.AddItem(ItemType.IronOre);
                 Gathered = true;
             }
             return true;

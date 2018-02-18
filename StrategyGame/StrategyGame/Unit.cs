@@ -154,8 +154,23 @@ namespace StrategyGame
                     goal.Add("StoreLog", true);
                     break;
                 case UnitType.Blacksmith:
-                    //goal.Add("StoreAxe", true);
-                    goal.Add("StorePickaxe", true);
+                    int axes = 0;
+                    int pickaxes = 0;
+
+                    List<Building> stockPiles = EntityManager.GetBuildings().Where(x => x.BuildingType == BuildingType.Stockpile).ToList();
+                    foreach(Building b in stockPiles)
+                    {
+                        List<ItemType> items = b.Inventory.Items;
+                        foreach (ItemType i in items)
+                            if (i == ItemType.IronAxe)
+                                axes++;
+                            else if (i == ItemType.IronPickaxe)
+                                pickaxes++;
+                    }
+                    if (pickaxes < axes)
+                        goal.Add("StorePickaxe", true);
+                    else
+                        goal.Add("StoreAxe", true);
                     break;
                 case UnitType.Miner:
                     goal.Add("StoreIronOre", true);
@@ -165,6 +180,7 @@ namespace StrategyGame
         }
     }
 }
+
     //public static class UnitExtension
     //{
     //    public static void DrawGatherReticles(this UnitGatherer Unit, SpriteBatch spriteBatch)

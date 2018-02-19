@@ -134,14 +134,6 @@ namespace StrategyGame
                 {
                     State.Remove(change.Key);
                     State.Add(change.Key, change.Value);
-
-                    //Dictionary<string, object> temp = new Dictionary<string, object>();
-                    //foreach (KeyValuePair<string, object> kvp in State.Where(x => !x.Equals(change.Key)))
-                    //    temp.Add(kvp.Key, kvp.Value);
-                    //State.Clear();
-                    //State = temp;
-                    //State.Add(change.Key, change.Value);
-                    /////// this is jank
                 }
                 else
                     State.Add(change.Key, change.Value);

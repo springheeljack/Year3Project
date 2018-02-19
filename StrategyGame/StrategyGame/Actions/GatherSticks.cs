@@ -8,6 +8,11 @@ namespace StrategyGame.Actions
 {
     public class GatherSticks : GOAPAction
     {
+        public override string ToString()
+        {
+            return "Gather sticks";
+        }
+
         private bool Gathered = false;
 
         private double StartTime = 0;

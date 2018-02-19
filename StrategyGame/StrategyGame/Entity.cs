@@ -26,7 +26,7 @@ namespace StrategyGame
             UpdateRectangle();
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update()
         {
             UpdateRectangle();
         }
@@ -47,11 +47,11 @@ namespace StrategyGame
         public static List<Entity> Entities { get; set; } = new List<Entity>();
         public static List<Entity> ToRemove { get; set; } = new List<Entity>();
         public static List<Entity> ToAdd { get; set; } = new List<Entity>();
-        public static void Update(GameTime gameTime)
+        public static void Update()
         {
             foreach (Entity e in Entities)
             {
-                e.Update(gameTime);
+                e.Update();
                 //if (e.ToRemove())
                 //    ToRemove.Add(e);
             }

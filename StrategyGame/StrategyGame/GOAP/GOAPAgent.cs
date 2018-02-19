@@ -18,6 +18,12 @@ namespace StrategyGame
         private FSM.FSMState IdleState;
         private FSM.FSMState MoveToState;
         private FSM.FSMState PerformActionState;
+        private LinkedList<Text> ThoughtLog = new LinkedList<Text>();
+
+        public LinkedList<Text> GetThoughts()
+        {
+            return ThoughtLog;
+        }
 
         public GOAPAgent(Vector2 position, string name, Point size, Texture2D texture) : base(position, name, size, texture) { }
 
@@ -35,7 +41,7 @@ namespace StrategyGame
             LoadActions();
         }
 
-        public void Update()
+        public void UpdateAgent()
         {
             fsm.Update(this);
         }
@@ -73,6 +79,7 @@ namespace StrategyGame
                 Queue<GOAPAction> Plan = Planner.Plan(agent, AvailableActions, WorldState, Goal);
                 if (Plan != null)
                 {
+                    AddThought("Plan created for goal " + Goal.Keys.First(), Color.DarkBlue);
                     CurrentActions = Plan;
                     DataProvider.PlanFound(Goal, Plan);
 
@@ -119,7 +126,10 @@ namespace StrategyGame
 
                 GOAPAction action = CurrentActions.Peek();
                 if (action.IsDone())
+                {
+                    AddThought("Completed action " + action.ToString(),Color.DarkOrange);
                     CurrentActions.Dequeue();
+                }
 
                 if (HasActionPlan())
                 {
@@ -140,6 +150,7 @@ namespace StrategyGame
                     else
                     {
                         fsm.PushState(MoveToState);
+                        AddThought("Moving to " + action.Target.Name,Color.DarkOliveGreen);
                     }
                 }
                 else
@@ -161,5 +172,13 @@ namespace StrategyGame
             AvailableActions = (this as Unit).Actions;
         }
 
+        public void AddThought(string thoughtString, Color thoughtColor)
+        {
+            AddThought(new Text(thoughtString, thoughtColor));
+        }
+        public void AddThought(Text thought)
+        {
+            ThoughtLog.AddFirst(thought);
+        }
     }
 }

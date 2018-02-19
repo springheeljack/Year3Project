@@ -8,6 +8,11 @@ namespace StrategyGame.Actions
 {
     public class PickUpIronOre : GOAPAction
     {
+        public override string ToString()
+        {
+            return "Pick up iron ore";
+        }
+
         private bool PickedUp = false;
 
         public PickUpIronOre()

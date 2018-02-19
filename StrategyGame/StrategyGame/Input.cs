@@ -22,7 +22,7 @@ namespace StrategyGame
             LastMouseState = MouseState;
             MouseState = Mouse.GetState();
 
-            MouseRectangle.Location = MouseState.Position;
+            MouseRectangle.Location = MouseState.Position;           
         }
 
         public static bool IsKeyHit(this KeyboardState keyboardState, Keys key)
@@ -30,11 +30,11 @@ namespace StrategyGame
             return KeyboardState.IsKeyDown(key) && KeyboardState.IsKeyUp(key);
         }
 
-        public static bool IsLeftClicked(this MouseState mouseState)
+        public static bool IsLeftClicked()
         {
             return MouseState.LeftButton == ButtonState.Pressed && LastMouseState.LeftButton == ButtonState.Released;
         }
-        public static bool IsRightClicked(this MouseState mouseState)
+        public static bool IsRightClicked()
         {
             return MouseState.RightButton == ButtonState.Pressed && LastMouseState.RightButton == ButtonState.Released;
         }

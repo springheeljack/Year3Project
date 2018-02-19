@@ -37,5 +37,7 @@ namespace StrategyGame
         public abstract bool Run(Entity entity);
 
         public abstract bool RequiresInRange();
+
+        public override abstract string ToString();
     }
 }

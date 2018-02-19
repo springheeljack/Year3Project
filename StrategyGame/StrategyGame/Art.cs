@@ -8,7 +8,8 @@ namespace StrategyGame
 {
     public static class Art
     {
-        public static SpriteFont SpriteFont { get; set; }
+        public static SpriteFont LargeFont { get; private set; }
+        public static SpriteFont SmallFont { get; private set; }
         public static Dictionary<string, Texture2D> Textures { get; } = new Dictionary<string, Texture2D>();
 
         public static string[] TilePaths = { "Grass", "Water", "Test" };
@@ -19,7 +20,8 @@ namespace StrategyGame
 
         public static void LoadContent(ContentManager Content)
         {
-            SpriteFont = Content.Load<SpriteFont>("Font/spriteFont");
+            LargeFont = Content.Load<SpriteFont>("Font/large");
+            SmallFont = Content.Load<SpriteFont>("Font/small");
 
             foreach (string dir in Directory.GetDirectories("Content/"+TexturePath))
                 foreach (string file in Directory.GetFiles(dir))

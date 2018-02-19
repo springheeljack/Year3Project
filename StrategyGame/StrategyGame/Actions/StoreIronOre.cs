@@ -8,6 +8,10 @@ namespace StrategyGame.Actions
 {
     public class StoreIronOre : GOAPAction
     {
+        public override string ToString()
+        {
+            return "Store iron ore";
+        }
 
         private bool Stored = false;
 

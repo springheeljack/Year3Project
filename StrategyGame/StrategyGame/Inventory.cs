@@ -27,6 +27,23 @@ namespace StrategyGame
             Items.Remove(itemType);
             ItemCount--;
         }
+        public static string GetItemName(ItemType item)
+        {
+            switch (item)
+            {
+                case ItemType.Log:
+                    return "Log";
+                case ItemType.IronOre:
+                    return "Iron Ore";
+                case ItemType.Iron:
+                    return "Iron";
+                case ItemType.IronAxe:
+                    return "Iron Axe";
+                case ItemType.IronPickaxe:
+                    return "Iron Pickaxe";
+            }
+            return "Error";
+        }
     }
 
     public enum ItemType

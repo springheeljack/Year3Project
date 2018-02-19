@@ -8,6 +8,11 @@ namespace StrategyGame.Actions
 {
     public class GatherIronOreWithHands : GOAPAction
     {
+        public override string ToString()
+        {
+            return "Gather iron ore with hands";
+        }
+
         private bool Gathered = false;
 
         private double StartTime = 0;

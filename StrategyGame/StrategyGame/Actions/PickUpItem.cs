@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 
 namespace StrategyGame.Actions
 {
-    public class PickUpAxe : GOAPAction
+    public class PickUpItem : GOAPAction
     {
         public override string ToString()
         {
-            return "Pick up Axe";
+            return "Pick up item";
         }
 
         private bool PickedUp = false;
+        private ItemType item;
 
-        public PickUpAxe()
+        public PickUpItem(ItemType item)
         {
             Preconditions.Add("HasAxe", false);
             Effects.Add("HasAxe", true);

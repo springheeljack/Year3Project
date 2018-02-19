@@ -8,6 +8,11 @@ namespace StrategyGame.Actions
 {
     public class PickUpLog : GOAPAction
     {
+        public override string ToString()
+        {
+            return "Pick up log";
+        }
+
         private bool PickedUp = false;
 
         public PickUpLog()

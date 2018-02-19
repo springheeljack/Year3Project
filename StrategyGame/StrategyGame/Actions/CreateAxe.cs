@@ -8,6 +8,11 @@ namespace StrategyGame.Actions
 {
     public class CreateAxe : GOAPAction
     {
+        public override string ToString()
+        {
+            return "Create Axe";
+        }
+
         bool Created = false;
         private double StartTime = 0;
         public float Duration = 5;

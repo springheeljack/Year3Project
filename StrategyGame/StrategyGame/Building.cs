@@ -11,6 +11,7 @@ namespace StrategyGame
         Forge
     }
 
+
     public class BuildingBase
     {
         public static void Initialize()
@@ -49,9 +50,6 @@ namespace StrategyGame
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (BuildingType == BuildingType.Stockpile)
-                spriteBatch.DrawString(Art.SpriteFont, Inventory.ItemCount.ToString(), Vector2.Zero, Color.Red);
-
             base.Draw(spriteBatch);
         }
     }

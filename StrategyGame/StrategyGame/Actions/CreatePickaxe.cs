@@ -8,6 +8,11 @@ namespace StrategyGame.Actions
 {
     public class CreatePickaxe : GOAPAction
     {
+        public override string ToString()
+        {
+            return "Create Pickaxe";
+        }
+
         bool Created = false;
         private double StartTime = 0;
         public float Duration = 5;

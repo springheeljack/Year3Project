@@ -8,6 +8,10 @@ namespace StrategyGame.Actions
 {
     public class StoreLog : GOAPAction
     {
+        public override string ToString()
+        {
+            return "Store log";
+        }
 
         private bool Stored = false;
 

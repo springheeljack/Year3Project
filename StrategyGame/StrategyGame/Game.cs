@@ -14,7 +14,7 @@ namespace StrategyGame
         public static readonly int WindowWidth = 1280;
         public static readonly int WindowHeight = 720;
         public static readonly Point WindowPosition = new Point(200);
-        public static readonly Rectangle FadeRectangle = new Rectangle(0, 0, WindowWidth, WindowHeight);
+        public static readonly Rectangle ScreenRectangle = new Rectangle(0, 0, WindowWidth, WindowHeight);
 
         public static bool Quit = false;
 
@@ -92,12 +92,15 @@ namespace StrategyGame
             Global.gameTime = gameTime;
 
             //Input
-            MouseExtension.Update();
-            KeyboardExtension.Update();
+            //MouseExtension.Update();
+            //KeyboardExtension.Update();
             Input.Update();
 
             //Entities
-            EntityManager.Update(gameTime);
+            EntityManager.Update();
+
+            //UI
+            UI.Update();
 
             if (Quit)
                 Exit();
@@ -112,9 +115,14 @@ namespace StrategyGame
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, null);
 
             if (Map.Loaded)
+            {
+                spriteBatch.Draw(Art.Textures["Background"], ScreenRectangle, Color.White);
                 Map.Draw(spriteBatch);
+            }
 
             EntityManager.Draw(spriteBatch);
+
+            UI.Draw(spriteBatch);
 
             spriteBatch.End();
 

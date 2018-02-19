@@ -75,8 +75,6 @@ namespace StrategyGame
 
     public class Unit : GOAPAgent, IGOAP
     {
-        private float waitTimer = 0;
-        const float waitTime = 1;
         private bool Started = false;
         public Inventory Inventory { get; private set; }
         public float MoveSpeed { get; private set; }
@@ -91,15 +89,15 @@ namespace StrategyGame
             MoveSpeed = unitBase.MoveSpeed;
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
             if (!Started)
             {
                 Start();
                 Started = true;
             }
-            Update();
-            base.Update(gameTime);
+            UpdateAgent();
+            base.Update();
         }
 
         public Dictionary<string, object> GetWorldState()
@@ -119,7 +117,11 @@ namespace StrategyGame
 
         public void PlanFound(Dictionary<string, object> goal, Queue<GOAPAction> actions) { }
 
-        public void ActionsFinished() { Start(); }
+        public void ActionsFinished()
+        {
+            AddThought("Plan completed!", Color.Green);
+            Start();
+        }
 
         public void PlanAborted(GOAPAction aborter) { }
 
@@ -136,7 +138,7 @@ namespace StrategyGame
             delta *= step;
             Position += delta;
 
-            if ((nextAction.Target.Position - Position).Length() < 1)
+            if ((nextAction.Target.Position - Position).Length() < 16)
             {
                 nextAction.InRange = true;
                 return true;

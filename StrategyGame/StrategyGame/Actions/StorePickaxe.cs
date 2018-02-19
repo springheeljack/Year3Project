@@ -8,6 +8,11 @@ namespace StrategyGame.Actions
 {
     public class StorePickaxe : GOAPAction
     {
+        public override string ToString()
+        {
+            return "Store pickaxe";
+        }
+
         bool Stored = false;
 
         public StorePickaxe()

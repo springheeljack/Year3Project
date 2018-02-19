@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StrategyGame
 {
     public interface IGOAP
     {
-        Dictionary<string, object> GetWorldState();
+        Dictionary<Tuple<string, object>, object> GetWorldState();
 
-        Dictionary<string, object> CreateGoalState();
+        Dictionary<Tuple<string, object>, object> CreateGoalState();
 
-        void PlanFailed(Dictionary<string, object> failedGoal);
+        void PlanFailed(Dictionary<Tuple<string, object>, object> failedGoal);
 
-        void PlanFound(Dictionary<string, object> goal, Queue<GOAPAction> actions);
+        void PlanFound(Dictionary<Tuple<string, object>, object> goal, Queue<GOAPAction> actions);
 
         void ActionsFinished();
 

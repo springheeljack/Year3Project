@@ -1,15 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StrategyGame
 {
-    public abstract class Entity : IRectangleObject
+    public abstract class Entity
     {
         public Rectangle Rectangle { get; set; }
         public Vector2 Position { get; protected set; }

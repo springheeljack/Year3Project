@@ -1,13 +1,35 @@
-﻿//using Microsoft.Xna.Framework;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Reflection;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-//namespace StrategyGame
-//{
+namespace StrategyGame
+{
+    public class Recipe
+    {
+        public static Dictionary<string, Recipe> Dictionary { get; private set; }
+
+        public static void Initialize()
+        {
+            Dictionary = new Dictionary<string, Recipe>
+            {
+                {"IronAxe",     new Recipe(BuildingType.Forge,      ItemType.IronAxe,       new List<ItemType>{ItemType.IronIngot,  ItemType.Log},  5) },
+                {"IronPickaxe", new Recipe(BuildingType.Forge,      ItemType.IronPickaxe,   new List<ItemType>{ItemType.IronIngot,  ItemType.Log},  5) },
+                {"IronIngot",   new Recipe(BuildingType.Smelter,    ItemType.IronIngot,     new List<ItemType>{ItemType.IronOre,    ItemType.Coal}, 5) },
+            };
+        }
+
+        public BuildingType Type    { get; private set; }
+        public ItemType Output      { get; private set; }
+        public List<ItemType> Input { get; private set; }
+        public float Duration       { get; private set; }
+
+        public Recipe(BuildingType type, ItemType output, List<ItemType> input, float duration = 1)
+        {
+            Type = type;
+            Output = output;
+            Input = input;
+            Duration = duration;
+        }
+    }
+}
 //    public interface IHasRecipe
 //    {
 //        List<Recipe> Recipes { get; }

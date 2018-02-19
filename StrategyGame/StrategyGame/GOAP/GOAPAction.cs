@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StrategyGame
 {
     public abstract class GOAPAction
     {
-        public Dictionary<string, object> Preconditions;
-        public Dictionary<string, object> Effects;
+        public Dictionary<Tuple<string, object>, object> Preconditions;
+        public Dictionary<Tuple<string, object>, object> Effects;
 
         public bool InRange { get; set; } = false;
         public float Cost = 1f;
@@ -17,8 +14,8 @@ namespace StrategyGame
 
         public GOAPAction()
         {
-            Preconditions = new Dictionary<string, object>();
-            Effects = new Dictionary<string, object>();
+            Preconditions = new Dictionary<Tuple<string, object>, object>();
+            Effects = new Dictionary<Tuple<string, object>, object>();
         }
 
         public void Reset()

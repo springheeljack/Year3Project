@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace StrategyGame.Actions
+namespace StrategyGame.GOAP.Actions
 {
-    public class GatherIronOreWithHands : GOAPAction
+    public class GatherResource : GOAPAction
     {
         public override string ToString()
         {
-            return "Gather iron ore with hands";
+            return "Gather " + Gather.Type.ToString();
         }
 
         private bool Gathered = false;
 
         private double StartTime = 0;
-        public float GatherDuration = 5;
+        private float Duration;
+        private Gather Gather;
 
-        public GatherIronOreWithHands()
+        public GatherResource(Gather gather)
         {
-            Preconditions.Add("HasPickaxe", false);
-            Preconditions.Add("HasIronOre", false);
-            Effects.Add("HasIronOre", true);
-            Cost = 5;
+            Gather = gather;
+            foreach (ItemType i in Gather.Input)
+                Preconditions.Add(new Tuple<string, object>("HasItem", i), true);
+            Effects.Add(new Tuple<string, object>("HasItem", Gather.Output), true);
+            Duration = Gather.Duration;
+            Cost = Gather.Duration;
         }
 
         public override void ResetExtra()
@@ -47,7 +48,7 @@ namespace StrategyGame.Actions
             List<ResourceNode> resourceNodes = EntityManager.GetResourceNodes();
             ResourceNode nearest = null;
             float distance = 0;
-            foreach (ResourceNode rn in resourceNodes.Where(x => x.ResourceNodeType == ResourceNodeType.IronRock))
+            foreach (ResourceNode rn in resourceNodes.Where(x => x.ResourceNodeType == Gather.Type))
             {
                 if (nearest == null)
                 {
@@ -73,10 +74,9 @@ namespace StrategyGame.Actions
             if (StartTime == 0)
                 StartTime = Global.gameTime.TotalGameTime.TotalSeconds;
 
-            if (Global.gameTime.TotalGameTime.TotalSeconds - StartTime > GatherDuration)
+            if (Global.gameTime.TotalGameTime.TotalSeconds - StartTime > Duration)
             {
-                //Finished Gathering
-                (entity as Unit).Inventory.AddItem(ItemType.IronOre);
+                (entity as Unit).Inventory.AddItem(Gather.Output);
                 Gathered = true;
             }
             return true;

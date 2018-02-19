@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace StrategyGame.Actions
+namespace StrategyGame.GOAP.Actions
 {
-    public class PickUpAxe : GOAPAction
+    public class PickUpItem : GOAPAction
     {
         public override string ToString()
         {
-            return "Pick up Axe";
+            return "Pick up " + Item.ToString();
         }
 
         private bool PickedUp = false;
+        private ItemType Item;
 
-        public PickUpAxe()
+        public PickUpItem(ItemType item)
         {
-            Preconditions.Add("HasAxe", false);
-            Effects.Add("HasAxe", true);
+            Item = item;
+            Preconditions.Add(new Tuple<string, object>("HasItem", item), false);
+            Effects.Add(new Tuple<string, object>("HasItem", item), true);
             Cost = 1;
         }
 
@@ -44,7 +44,7 @@ namespace StrategyGame.Actions
             float distance = 0;
             foreach (Building b in buildings.Where(x => x.BuildingType == BuildingType.Stockpile))
             {
-                if (b.Inventory.Items.Contains(ItemType.IronAxe))
+                if (b.Inventory.Items.ContainsKey(Item))
                     if (nearest == null)
                     {
                         nearest = b;
@@ -66,8 +66,8 @@ namespace StrategyGame.Actions
 
         public override bool Run(Entity entity)
         {
-            (entity as Unit).Inventory.AddItem(ItemType.IronAxe);
-            (Target as Building).Inventory.RemoveItem(ItemType.IronAxe);
+            (entity as Unit).Inventory.AddItem(Item);
+            (Target as Building).Inventory.RemoveItem(Item);
             PickedUp = true;
 
             return true;

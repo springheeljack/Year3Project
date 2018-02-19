@@ -1,11 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StrategyGame.Extension;
+using System.Linq;
 
 namespace StrategyGame
 {
@@ -58,8 +54,8 @@ namespace StrategyGame
                 if (inv != null)
                 {
                     spriteBatch.DrawString(Art.LargeFont, "Inventory", new Vector2(970, 110), Color.Black);
-                    for (int i = 0; i < inv.ItemCount; i++)
-                        spriteBatch.DrawString(Art.SmallFont, Inventory.GetItemName(inv.Items[i]), new Vector2(970, 140 + (i * 20)), Color.Black);
+                    for (int i = 0; i < inv.Items.Count; i++)
+                        spriteBatch.DrawString(Art.SmallFont, inv.Items.Keys.ToArray()[i].ToString() +" - " + inv.Items.Values.ToArray()[i].ToString(), new Vector2(970, 140 + (i * 20)), Color.Black);
                 }
 
                 if (Global.selected is GOAPAgent)
@@ -69,17 +65,11 @@ namespace StrategyGame
                     int count = 0;
                     foreach (Text t in (Global.selected as GOAPAgent).GetThoughts())
                     {
-                        //spriteBatch.DrawString(Art.SmallFont, t.String, new Vector2(970, 470 + (count * 20)), t.Color);
                         spriteBatch.DrawDoubleString(Art.SmallFont, t.String, new Vector2(970, 320 + (count * 20)), t.Color);
                         count++;
                     }
                 }
             }
         }
-
-        //public static void DrawDoubleString(SpriteFont spriteFont, string text, Vector2 position, Color color)
-        //{
-        //    spriteBatch.DrawString(spriteFont, text, position, color);
-        //}
     }
 }

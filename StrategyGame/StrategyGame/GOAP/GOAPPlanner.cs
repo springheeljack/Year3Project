@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StrategyGame
 {
@@ -12,10 +9,10 @@ namespace StrategyGame
         {
             public Node Parent;
             public float TotalCost;
-            public Dictionary<string, object> State;
+            public Dictionary<Tuple<string, object>, object> State;
             public GOAPAction Action;
 
-            public Node(Node parent, float totalCost, Dictionary<string, object> state, GOAPAction action)
+            public Node(Node parent, float totalCost, Dictionary<Tuple<string, object>, object> state, GOAPAction action)
             {
                 Parent = parent;
                 TotalCost = totalCost;
@@ -24,7 +21,7 @@ namespace StrategyGame
             }
         }
 
-        public Queue<GOAPAction> Plan(GOAPAgent agent, List<GOAPAction> availableActions, Dictionary<string, object> worldState, Dictionary<string, object> goal)
+        public Queue<GOAPAction> Plan(GOAPAgent agent, List<GOAPAction> availableActions, Dictionary<Tuple<string, object>, object> worldState, Dictionary<Tuple<string, object>, object> goal)
         {
             foreach (GOAPAction a in availableActions)
                 a.Reset();
@@ -68,14 +65,14 @@ namespace StrategyGame
             return queue;
         }
 
-        private bool BuildGraph(Node parent, List<Node> tree, List<GOAPAction> usableActions, Dictionary<string, object> goal)
+        private bool BuildGraph(Node parent, List<Node> tree, List<GOAPAction> usableActions, Dictionary<Tuple<string, object>, object> goal)
         {
             bool HasSolution = false;
 
             foreach (GOAPAction a in usableActions)
                 if (InState(a.Preconditions, parent.State))
                 {
-                    Dictionary<string, object> CurrentState = PopulateState(parent.State, a.Effects);
+                    Dictionary<Tuple<string, object>, object> CurrentState = PopulateState(parent.State, a.Effects);
 
                     Node Node = new Node(parent, parent.TotalCost + a.Cost, CurrentState, a);
 
@@ -95,13 +92,13 @@ namespace StrategyGame
             return HasSolution;
         }
 
-        private bool InState(Dictionary<string, object> test, Dictionary<string, object> state)
+        private bool InState(Dictionary<Tuple<string, object>, object> test, Dictionary<Tuple<string, object>, object> state)
         {
             bool AllMatch = true;
-            foreach (KeyValuePair<string, object> t in test)
+            foreach (KeyValuePair<Tuple<string, object>, object> t in test)
             {
                 bool Match = false;
-                foreach (KeyValuePair<string, object> s in state)
+                foreach (KeyValuePair<Tuple<string, object>, object> s in state)
                     if (s.Equals(t))
                     {
                         Match = true;
@@ -113,18 +110,18 @@ namespace StrategyGame
             return AllMatch;
         }
 
-        private Dictionary<string,object> PopulateState(Dictionary<string,object> currentState, Dictionary<string,object> stateChange)
+        private Dictionary<Tuple<string, object>, object> PopulateState(Dictionary<Tuple<string, object>, object> currentState, Dictionary<Tuple<string, object>, object> stateChange)
         {
-            Dictionary<string, object> State = new Dictionary<string, object>();
-            foreach (KeyValuePair<string, object> kvp in currentState)
+            Dictionary<Tuple<string, object>, object> State = new Dictionary<Tuple<string, object>, object>();
+            foreach (KeyValuePair<Tuple<string, object>, object> kvp in currentState)
                 State.Add(kvp.Key, kvp.Value);
 
-            foreach (KeyValuePair<string, object> change in stateChange)
+            foreach (KeyValuePair<Tuple<string, object>, object> change in stateChange)
             {
                 bool Exists = false;
 
-                foreach (KeyValuePair<string, object> s in State)
-                    if (s.Key == change.Key)
+                foreach (KeyValuePair<Tuple<string, object>, object> s in State)
+                    if (s.Key.Equals(change.Key))
                     {
                         Exists = true;
                         break;

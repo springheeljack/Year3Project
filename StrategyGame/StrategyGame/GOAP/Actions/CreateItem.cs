@@ -1,35 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace StrategyGame.Actions
+namespace StrategyGame.GOAP.Actions
 {
-    public class CreateAxe : GOAPAction
+    public class CreateItem : GOAPAction
     {
         public override string ToString()
         {
-            return "Create Axe";
+            return "Create " + Recipe.Output.ToString();
         }
 
         bool Created = false;
         private double StartTime = 0;
-        public float Duration = 5;
+        public float Duration;
+        private Recipe Recipe;
 
-        public CreateAxe()
+        public CreateItem(Recipe recipe)
         {
-            Preconditions.Add("HasLog", true);
-            Preconditions.Add("HasIronOre", true);
-            Effects.Add("HasAxe", true);
-            Effects.Add("HasLog", false);
-            Effects.Add("HasIronOre", false);
-            Cost = 5;
+            Recipe = recipe;
+            foreach (ItemType i in Recipe.Input)
+            {
+                Preconditions.Add(new Tuple<string, object>("HasItem", i), true);
+                Effects.Add(new Tuple<string, object>("HasItem", i), false);
+            }
+            Effects.Add(new Tuple<string, object>("HasItem", Recipe.Output), true);
+            Cost = Recipe.Duration;
+            Duration = Recipe.Duration;
         }
 
         public override bool CheckProceduralPrecondition(GOAPAgent agent)
         {
-            List<Building> buildings = EntityManager.GetBuildings().Where(x => x.BuildingType == BuildingType.Forge).ToList();
+            List<Building> buildings = EntityManager.GetBuildings().Where(x => x.BuildingType == Recipe.Type).ToList();
             Building nearest = null;
             float distance = 0;
             foreach (Building b in buildings)
@@ -74,9 +76,9 @@ namespace StrategyGame.Actions
 
             if (Global.gameTime.TotalGameTime.TotalSeconds - StartTime > Duration)
             {
-                (entity as Unit).Inventory.AddItem(ItemType.IronAxe);
-                (entity as Unit).Inventory.RemoveItem(ItemType.Log);
-                (entity as Unit).Inventory.RemoveItem(ItemType.IronOre);
+                (entity as Unit).Inventory.AddItem(Recipe.Output);
+                foreach (ItemType i in Recipe.Input)
+                    (entity as Unit).Inventory.RemoveItem(i);
                 Created = true;
             }
             return true;

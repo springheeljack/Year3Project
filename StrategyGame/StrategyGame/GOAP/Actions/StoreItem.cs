@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace StrategyGame.Actions
+namespace StrategyGame.GOAP.Actions
 {
-    public class StoreIronOre : GOAPAction
+    public class StoreItem : GOAPAction
     {
         public override string ToString()
         {
-            return "Store iron ore";
+            return "Store " + Item.ToString();
         }
 
         private bool Stored = false;
+        private ItemType Item;
 
-        public StoreIronOre()
+        public StoreItem(ItemType item)
         {
-            Preconditions.Add("HasIronOre", true);
-            Effects.Add("HasIronOre", false);
-            Effects.Add("StoreIronOre", true);
+            Item = item;
+            Preconditions.Add(new Tuple<string, object>("HasItem", item), true);
+            Effects.Add(new Tuple<string, object>("HasItem", item), false);
+            Effects.Add(new Tuple<string, object>("StoreItem", item), true);
+            Cost = 1;
         }
 
         public override void ResetExtra()
@@ -65,8 +66,8 @@ namespace StrategyGame.Actions
 
         public override bool Run(Entity entity)
         {
-            (Target as Building).Inventory.AddItem(ItemType.IronOre);
-            (entity as Unit).Inventory.RemoveItem(ItemType.IronOre);
+            (Target as Building).Inventory.AddItem(Item);
+            (entity as Unit).Inventory.RemoveItem(Item);
             Stored = true;
             return true;
         }

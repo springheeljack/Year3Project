@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StrategyGame
 {
@@ -73,8 +71,8 @@ namespace StrategyGame
         {
             IdleState = (fsm, agent) =>
             {
-                Dictionary<string, object> WorldState = DataProvider.GetWorldState();
-                Dictionary<string, object> Goal = DataProvider.CreateGoalState();
+                Dictionary<Tuple<string, object>, object> WorldState = DataProvider.GetWorldState();
+                Dictionary<Tuple<string, object>, object> Goal = DataProvider.CreateGoalState();
 
                 Queue<GOAPAction> Plan = Planner.Plan(agent, AvailableActions, WorldState, Goal);
                 if (Plan != null)

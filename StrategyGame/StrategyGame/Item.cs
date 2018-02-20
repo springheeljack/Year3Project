@@ -13,6 +13,10 @@ namespace StrategyGame
         IronIngot,
         IronAxe,
         IronPickaxe,
-        Coal
+        Coal,
+        Wheat,
+        Flour,
+        Bread,
+        Scythe
     }
 }

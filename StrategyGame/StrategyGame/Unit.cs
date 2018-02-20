@@ -52,10 +52,22 @@ namespace StrategyGame
                 new CreateItem(Recipe.Dictionary["IronAxe"]),
                 new CreateItem(Recipe.Dictionary["IronPickaxe"]),
                 new CreateItem(Recipe.Dictionary["IronIngot"]),
+                new CreateItem(Recipe.Dictionary["Scythe"]),
                 new StoreItem(ItemType.IronAxe),
                 new StoreItem(ItemType.IronPickaxe),
+                new StoreItem(ItemType.Scythe),
             };
             Bases.Add("Blacksmith", new UnitBase("Blacksmith", new Point(32), Art.Textures["Blacksmith"], 10, 50, Actions));
+
+            //Farmer
+            Actions = new List<GOAPAction>
+            {
+                new GatherResource(Gather.Dictionary["FarmNoScythe"]),
+                new GatherResource(Gather.Dictionary["Farm"]),
+                new StoreItem(ItemType.Wheat),
+                new PickUpItem(ItemType.Scythe)
+            };
+            Bases.Add("Farmer", new UnitBase("Farmer", new Point(32), Art.Textures["Farmer"], 10, 75, Actions));
         }
 
         public UnitBase(string name, Point size, Texture2D texture, int inventoryCapacity, float moveSpeed, List<GOAPAction> actions)
@@ -156,11 +168,6 @@ namespace StrategyGame
             foreach (Building b in stockpiles)
             {
                 Dictionary<ItemType, int> items = b.Inventory.Items;
-                //foreach (ItemType i in items)
-                //    if (i == ItemType.Coal)
-                //        coal;
-                //    else if (i == ItemType.IronOre)
-                //        ironOre++;
                 if (items.ContainsKey(ItemType.Coal))
                     coal += items[ItemType.Coal];
                 if (items.ContainsKey(ItemType.IronOre))
@@ -196,27 +203,81 @@ namespace StrategyGame
         {
             Dictionary<Tuple<string, object>, object> goal = new Dictionary<Tuple<string, object>, object>();
 
-            int axes = 0;
-            int pickaxes = 0;
+            ItemType[] items = { ItemType.Scythe, ItemType.IronAxe, ItemType.IronPickaxe };
             List<Building> stockpiles = EntityManager.GetBuildings().Where(x => x.BuildingType == BuildingType.Stockpile).ToList();
-            foreach (Building b in stockpiles)
+            int lowest = -1;
+            ItemType lowestItem = 0;
+            foreach (ItemType i in items)
             {
-                Dictionary<ItemType, int> items = b.Inventory.Items;
-                if (items.ContainsKey(ItemType.IronAxe))
-                    axes += items[ItemType.IronAxe];
-                if (items.ContainsKey(ItemType.IronPickaxe))
-                    pickaxes += items[ItemType.IronPickaxe];
-                //List<ItemType> items = b.Inventory.Items.Keys.ToList();
-                //foreach (ItemType i in items)
-                //    if (i == ItemType.IronAxe)
-                //        axes++;
-                //    else if (i == ItemType.IronPickaxe)
-                //        pickaxes++;
+                int item = 0;
+                foreach (Building b in stockpiles)
+                {
+                    if (b.Inventory.Items.ContainsKey(i))
+                        item += b.Inventory.Items[i];
+                }
+                if (lowest == -1)
+                {
+                    lowest = item;
+                    lowestItem = i;
+                }
+                else if (item < lowest)
+                {
+                    lowest = item;
+                    lowestItem = i;
+                }
             }
-            if (pickaxes < axes)
-                goal.Add(new Tuple<string, object>("StoreItem", ItemType.IronPickaxe), true);
-            else
-                goal.Add(new Tuple<string, object>("StoreItem", ItemType.IronAxe), true);
+            goal.Add(new Tuple<string, object>("StoreItem", ItemType.Scythe), true);
+            //int axes = 0;
+            //int pickaxes = 0;
+            //List<Building> stockpiles = EntityManager.GetBuildings().Where(x => x.BuildingType == BuildingType.Stockpile).ToList();
+            //foreach (Building b in stockpiles)
+            //{
+            //    Dictionary<ItemType, int> items = b.Inventory.Items;
+            //    if (items.ContainsKey(ItemType.IronAxe))
+            //        axes += items[ItemType.IronAxe];
+            //    if (items.ContainsKey(ItemType.IronPickaxe))
+            //        pickaxes += items[ItemType.IronPickaxe];
+            //}
+            //if (pickaxes < axes)
+            //    goal.Add(new Tuple<string, object>("StoreItem", ItemType.IronPickaxe), true);
+            //else
+            //    goal.Add(new Tuple<string, object>("StoreItem", ItemType.IronAxe), true);
+            return goal;
+        }
+    }
+
+    public class Farmer : Unit
+    {
+        public Farmer(Vector2 position) : base(UnitBase.Bases["Farmer"], position) { }
+
+        public override Dictionary<Tuple<string, object>, object> CreateGoalState()
+        {
+            Dictionary<Tuple<string, object>, object> goal = new Dictionary<Tuple<string, object>, object>();
+            goal.Add(new Tuple<string, object>("StoreItem", ItemType.Wheat), true);
+            return goal;
+        }
+    }
+
+    public class Miller : Unit
+    {
+        public Miller(Vector2 position) : base(UnitBase.Bases["Miller"], position) { }
+
+        public override Dictionary<Tuple<string, object>, object> CreateGoalState()
+        {
+            Dictionary<Tuple<string, object>, object> goal = new Dictionary<Tuple<string, object>, object>();
+            goal.Add(new Tuple<string, object>("StoreItem", ItemType.Flour), true);
+            return goal;
+        }
+    }
+
+    public class Baker : Unit
+    {
+        public Baker(Vector2 position) : base(UnitBase.Bases["Baker"], position) { }
+
+        public override Dictionary<Tuple<string, object>, object> CreateGoalState()
+        {
+            Dictionary<Tuple<string, object>, object> goal = new Dictionary<Tuple<string, object>, object>();
+            goal.Add(new Tuple<string, object>("StoreItem", ItemType.Bread), true);
             return goal;
         }
     }

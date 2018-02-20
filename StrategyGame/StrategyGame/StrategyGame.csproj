@@ -101,7 +101,8 @@
     <Content Include="Content\Texture\Unit\Creep.png" />
     <Content Include="Content\Texture\Unit\Miner.png" />
     <Content Include="Icon.ico" />
-    <Content Include="sources.txt" />
+    <Content Include="Text\ideas.txt" />
+    <Content Include="Text\sources.txt" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />

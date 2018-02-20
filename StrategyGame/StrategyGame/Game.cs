@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StrategyGame.Extension;
 
 namespace StrategyGame
 {
@@ -32,7 +33,6 @@ namespace StrategyGame
         protected override void Initialize()
         {
 
-
             base.Initialize();
         }
 
@@ -49,9 +49,12 @@ namespace StrategyGame
             BuildingBase.Initialize();
             ResourceNodeBase.Initialize();
 
-            EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Stockpile"], new Vector2(200)));
+            EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Stockpile"], new Vector2(400,200)));
             EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Forge"], new Vector2(200, 400)));
             EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Smelter"], new Vector2(400, 400)));
+            //EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Farm"], new Vector2(600, 200)));
+            EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Windmill"], new Vector2(600, 400)));
+            EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Bakery"], new Vector2(800, 200)));
             EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Tree"], new Vector2(300)));
             EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Tree"], new Vector2(350)));
             EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Sticks"], new Vector2(300, 200)));
@@ -59,12 +62,13 @@ namespace StrategyGame
             EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Sticks"], new Vector2(100, 500)));
             EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Iron Rock"], new Vector2(200, 100)));
             EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Coal Rock"], new Vector2(100, 200)));
+            EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Farm"], new Vector2(600, 200)));
 
 
             EntityManager.ToAdd.Add(new Miner(new Vector2(100)));
             EntityManager.ToAdd.Add(new Woodcutter(new Vector2(100, 200)));
             EntityManager.ToAdd.Add(new Blacksmith(new Vector2(100, 300)));
-
+            EntityManager.ToAdd.Add(new Farmer(new Vector2(500, 250)));
         }
 
         protected override void UnloadContent()

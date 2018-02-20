@@ -13,6 +13,7 @@ namespace StrategyGame
                 {"IronAxe",     new Recipe(BuildingType.Forge,      ItemType.IronAxe,       new List<ItemType>{ItemType.IronIngot,  ItemType.Log},  5) },
                 {"IronPickaxe", new Recipe(BuildingType.Forge,      ItemType.IronPickaxe,   new List<ItemType>{ItemType.IronIngot,  ItemType.Log},  5) },
                 {"IronIngot",   new Recipe(BuildingType.Smelter,    ItemType.IronIngot,     new List<ItemType>{ItemType.IronOre,    ItemType.Coal}, 5) },
+                {"Scythe",      new Recipe(BuildingType.Forge,      ItemType.Scythe,        new List<ItemType>{ItemType.IronIngot,  ItemType.Log }, 5) }
             };
         }
 

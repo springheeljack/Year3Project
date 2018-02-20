@@ -15,7 +15,9 @@ namespace StrategyGame
                 {"CoalRock",new Gather(ResourceNodeType.CoalRock,ItemType.Coal,new List<ItemType>{ItemType.IronPickaxe},2) },
                 {"CoalRockNoPickaxe",new Gather(ResourceNodeType.CoalRock,ItemType.Coal,new List<ItemType>(),5) },
                 {"Sticks",new Gather(ResourceNodeType.Sticks,ItemType.Log,new List<ItemType>(),5) },
-                {"Tree",new Gather(ResourceNodeType.Tree,ItemType.Log,new List<ItemType>{ItemType.IronAxe},2) }
+                {"Tree",new Gather(ResourceNodeType.Tree,ItemType.Log,new List<ItemType>{ItemType.IronAxe},2) },
+                {"FarmNoScythe",new Gather(ResourceNodeType.Farm,ItemType.Wheat,new List<ItemType>(),5) },
+                {"Farm",new Gather(ResourceNodeType.Farm,ItemType.Wheat,new List<ItemType>(){ ItemType.Scythe},2) },
             };
         }
 

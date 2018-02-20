@@ -8,7 +8,9 @@ namespace StrategyGame
     {
         Stockpile,
         Forge,
-        Smelter
+        Smelter,
+        Windmill,
+        Bakery
     }
 
     public class BuildingBase
@@ -18,6 +20,8 @@ namespace StrategyGame
             Bases.Add("Stockpile", new BuildingBase(BuildingType.Stockpile, "Stockpile", new Point(64), Art.Textures["Stockpile"], -1));
             Bases.Add("Forge", new BuildingBase(BuildingType.Forge, "Forge", new Point(64), Art.Textures["Forge"], 25));
             Bases.Add("Smelter", new BuildingBase(BuildingType.Smelter, "Smelter", new Point(64), Art.Textures["Smelter"], 25));
+            Bases.Add("Windmill", new BuildingBase(BuildingType.Windmill, "Windmill", new Point(64), Art.Textures["Windmill"], 25));
+            Bases.Add("Bakery", new BuildingBase(BuildingType.Bakery, "Bakery", new Point(64), Art.Textures["Bakery"], 25));
         }
 
         public static Dictionary<string, BuildingBase> Bases = new Dictionary<string, BuildingBase>();

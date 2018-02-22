@@ -50,9 +50,9 @@ namespace StrategyGame
             ResourceNodeBase.Initialize();
 
             EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Stockpile"], new Vector2(400,200)));
+            EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Stockpile"], new Vector2(700, 300)));
             EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Forge"], new Vector2(200, 400)));
             EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Smelter"], new Vector2(400, 400)));
-            //EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Farm"], new Vector2(600, 200)));
             EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Windmill"], new Vector2(600, 400)));
             EntityManager.ToAdd.Add(new Building(BuildingBase.Bases["Bakery"], new Vector2(800, 200)));
             EntityManager.ToAdd.Add(new ResourceNode(ResourceNodeBase.Bases["Tree"], new Vector2(300)));
@@ -69,6 +69,8 @@ namespace StrategyGame
             EntityManager.ToAdd.Add(new Woodcutter(new Vector2(100, 200)));
             EntityManager.ToAdd.Add(new Blacksmith(new Vector2(100, 300)));
             EntityManager.ToAdd.Add(new Farmer(new Vector2(500, 250)));
+            EntityManager.ToAdd.Add(new Miller(new Vector2(500, 400)));
+            EntityManager.ToAdd.Add(new Baker(new Vector2(700, 400)));
         }
 
         protected override void UnloadContent()

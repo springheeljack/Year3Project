@@ -68,6 +68,25 @@ namespace StrategyGame
                 new PickUpItem(ItemType.Scythe)
             };
             Bases.Add("Farmer", new UnitBase("Farmer", new Point(32), Art.Textures["Farmer"], 10, 75, Actions));
+
+            //Miller
+            Actions = new List<GOAPAction>
+            {
+                new StoreItem(ItemType.Flour),
+                new PickUpItem(ItemType.Wheat),
+                new CreateItem(Recipe.Dictionary["Flour"])
+            };
+            Bases.Add("Miller", new UnitBase("Miller", new Point(32), Art.Textures["Miller"], 10, 75, Actions));
+
+            //Baker
+            Actions = new List<GOAPAction>
+            {
+                new StoreItem(ItemType.Bread),
+                new PickUpItem(ItemType.Flour),
+                new PickUpItem(ItemType.Log),
+                new CreateItem(Recipe.Dictionary["Bread"])
+            };
+            Bases.Add("Baker", new UnitBase("Baker", new Point(32), Art.Textures["Baker"], 10, 75, Actions));
         }
 
         public UnitBase(string name, Point size, Texture2D texture, int inventoryCapacity, float moveSpeed, List<GOAPAction> actions)
@@ -226,22 +245,7 @@ namespace StrategyGame
                     lowestItem = i;
                 }
             }
-            goal.Add(new Tuple<string, object>("StoreItem", ItemType.Scythe), true);
-            //int axes = 0;
-            //int pickaxes = 0;
-            //List<Building> stockpiles = EntityManager.GetBuildings().Where(x => x.BuildingType == BuildingType.Stockpile).ToList();
-            //foreach (Building b in stockpiles)
-            //{
-            //    Dictionary<ItemType, int> items = b.Inventory.Items;
-            //    if (items.ContainsKey(ItemType.IronAxe))
-            //        axes += items[ItemType.IronAxe];
-            //    if (items.ContainsKey(ItemType.IronPickaxe))
-            //        pickaxes += items[ItemType.IronPickaxe];
-            //}
-            //if (pickaxes < axes)
-            //    goal.Add(new Tuple<string, object>("StoreItem", ItemType.IronPickaxe), true);
-            //else
-            //    goal.Add(new Tuple<string, object>("StoreItem", ItemType.IronAxe), true);
+            goal.Add(new Tuple<string, object>("StoreItem", lowestItem), true);
             return goal;
         }
     }

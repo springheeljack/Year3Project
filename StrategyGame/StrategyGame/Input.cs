@@ -20,9 +20,9 @@ namespace StrategyGame
             MouseRectangle.Location = MouseState.Position;           
         }
 
-        public static bool IsKeyHit(this KeyboardState keyboardState, Keys key)
+        public static bool IsKeyHit(Keys key)
         {
-            return KeyboardState.IsKeyDown(key) && KeyboardState.IsKeyUp(key);
+            return KeyboardState.IsKeyDown(key) && LastKeyboardState.IsKeyUp(key);
         }
 
         public static bool IsLeftClicked()

@@ -10,17 +10,19 @@ namespace StrategyGame
         {
             Dictionary = new Dictionary<string, Recipe>
             {
-                {"IronAxe",     new Recipe(BuildingType.Forge,      ItemType.IronAxe,       new List<ItemType>{ItemType.IronIngot,  ItemType.Log},  5) },
-                {"IronPickaxe", new Recipe(BuildingType.Forge,      ItemType.IronPickaxe,   new List<ItemType>{ItemType.IronIngot,  ItemType.Log},  5) },
-                {"IronIngot",   new Recipe(BuildingType.Smelter,    ItemType.IronIngot,     new List<ItemType>{ItemType.IronOre,    ItemType.Coal}, 5) },
-                {"Scythe",      new Recipe(BuildingType.Forge,      ItemType.Scythe,        new List<ItemType>{ItemType.IronIngot,  ItemType.Log }, 5) }
+                {"IronAxe",      new Recipe(BuildingType.Forge,      ItemType.IronAxe,       new List<ItemType>{ItemType.IronIngot,  ItemType.Log},  5) },
+                {"IronPickaxe",  new Recipe(BuildingType.Forge,      ItemType.IronPickaxe,   new List<ItemType>{ItemType.IronIngot,  ItemType.Log},  5) },
+                {"IronIngot",    new Recipe(BuildingType.Smelter,    ItemType.IronIngot,     new List<ItemType>{ItemType.IronOre,    ItemType.Coal}, 5) },
+                {"Scythe",       new Recipe(BuildingType.Forge,      ItemType.Scythe,        new List<ItemType>{ItemType.IronIngot,  ItemType.Log},  5) },
+                {"Flour",        new Recipe(BuildingType.Windmill,   ItemType.Flour,         new List<ItemType>{ItemType.Wheat},                     5) },
+                {"Bread",        new Recipe(BuildingType.Bakery,     ItemType.Bread,         new List<ItemType>{ItemType.Flour,      ItemType.Log},  5) },
             };
         }
 
-        public BuildingType Type    { get; private set; }
-        public ItemType Output      { get; private set; }
+        public BuildingType Type { get; private set; }
+        public ItemType Output { get; private set; }
         public List<ItemType> Input { get; private set; }
-        public float Duration       { get; private set; }
+        public float Duration { get; private set; }
 
         public Recipe(BuildingType type, ItemType output, List<ItemType> input, float duration = 1)
         {

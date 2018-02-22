@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using StrategyGame.Extension;
 using System.Linq;
 
@@ -18,14 +19,28 @@ namespace StrategyGame
 
     public static class UI
     {
+        static bool HelpScreen = false;
+
         public static void Update()
         {
-            if (Input.IsLeftClicked())
+            if (Input.IsKeyHit(Keys.H))
             {
+                HelpScreen = !HelpScreen;
                 Global.selected = null;
-                foreach (Entity e in EntityManager.Entities)
-                    if (Input.MouseRectangle.Intersects(e.Rectangle))
-                        Global.selected = e;
+            }
+            if (!HelpScreen)
+            {
+                if (Input.IsLeftClicked())
+                {
+                    Global.selected = null;
+                    foreach (Entity e in EntityManager.Entities)
+                        if (Input.MouseRectangle.Intersects(e.Rectangle))
+                            Global.selected = e;
+                }
+                if (Input.IsRightClicked())
+                {
+                    ///////////////spawn creep
+                }
             }
         }
 
@@ -65,10 +80,24 @@ namespace StrategyGame
                     int count = 0;
                     foreach (Text t in (Global.selected as GOAPAgent).GetThoughts())
                     {
+                        if (count == 0)
+                            spriteBatch.Draw(Art.Textures["Pixel"], new Rectangle(new Point(970,320),Art.SmallFont.MeasureString(t.String).ToPoint()), Color.Yellow);
                         spriteBatch.DrawDoubleString(Art.SmallFont, t.String, new Vector2(970, 320 + (count * 20)), t.Color);
                         count++;
                     }
                 }
+            }
+            if (HelpScreen)
+            {
+                Texture2D texture = Art.Textures["Help Screen"];
+                spriteBatch.Draw(texture, new Rectangle(Game.WindowWidth / 2 - texture.Width/2-20, Game.WindowHeight / 2 - texture.Height/2, texture.Width, texture.Height), Color.White);
+                spriteBatch.DrawDoubleString(Art.LargeFont, "Press H to close help screen", new Vector2(620, 560), Color.Red);
+                spriteBatch.DrawDoubleString(Art.SmallFont, "Click on an entity to view information about it.", new Vector2(320, 140), Color.Black);
+                spriteBatch.DrawDoubleString(Art.SmallFont, "If the entity is a GOAP agent, a list of its thoughts will be displayed.", new Vector2(320, 170), Color.Black);
+            }
+            else
+            {
+                spriteBatch.DrawDoubleString(Art.LargeFont, "Press H to view help screen", new Vector2(10, 680), Color.Red);
             }
         }
     }

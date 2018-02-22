@@ -17,13 +17,14 @@ namespace StrategyGame
         private FSM.FSMState MoveToState;
         private FSM.FSMState PerformActionState;
         private LinkedList<Text> ThoughtLog = new LinkedList<Text>();
+        public Vector2 PlannedLocation;
 
         public LinkedList<Text> GetThoughts()
         {
             return ThoughtLog;
         }
 
-        public GOAPAgent(Vector2 position, string name, Point size, Texture2D texture) : base(position, name, size, texture) { }
+        public GOAPAgent(Vector2 position, string name, Point size, Texture2D texture) : base(position, name, size, texture) { PlannedLocation = position; }
 
         public void Start()
         {
@@ -107,7 +108,10 @@ namespace StrategyGame
                 }
 
                 if (DataProvider.MoveAgent(Action))
+                {
                     fsm.PopState();
+                    AddThought("Performing action " + Action.ToString(), Color.Blue);
+                }
             };
         }
 

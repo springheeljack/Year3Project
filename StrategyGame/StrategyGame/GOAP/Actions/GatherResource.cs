@@ -53,11 +53,11 @@ namespace StrategyGame.GOAP.Actions
                 if (nearest == null)
                 {
                     nearest = rn;
-                    distance = ((agent as Unit).Position.Distance(rn.Position));
+                    distance = (agent.PlannedLocation.Distance(rn.Position));
                 }
                 else
                 {
-                    float tempDistance = ((agent as Unit).Position.Distance(rn.Position));
+                    float tempDistance = (agent.PlannedLocation.Distance(rn.Position));
                     if (tempDistance < distance)
                     {
                         nearest = rn;
@@ -66,6 +66,8 @@ namespace StrategyGame.GOAP.Actions
                 }
             }
             Target = nearest;
+            if (Target != null)
+                agent.PlannedLocation = Target.Position;
             return nearest != null;
         }
 

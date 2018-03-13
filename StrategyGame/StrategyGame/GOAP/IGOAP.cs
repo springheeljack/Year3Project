@@ -7,11 +7,11 @@ namespace StrategyGame
     {
         Dictionary<Tuple<string, object>, object> GetWorldState();
 
-        Dictionary<Tuple<string, object>, object> CreateGoalState();
+        List<KeyValuePair<Tuple<string, object>, object>> CreateGoalState();
 
-        void PlanFailed(Dictionary<Tuple<string, object>, object> failedGoal);
+        void PlanFailed(KeyValuePair<Tuple<string, object>, object> failedGoal);
 
-        void PlanFound(Dictionary<Tuple<string, object>, object> goal, Queue<GOAPAction> actions);
+        void PlanFound(KeyValuePair<Tuple<string, object>, object> goal, Queue<GOAPAction> actions);
 
         void ActionsFinished();
 

@@ -21,21 +21,28 @@ namespace StrategyGame
             }
         }
 
-        public Queue<GOAPAction> Plan(GOAPAgent agent, List<GOAPAction> availableActions, Dictionary<Tuple<string, object>, object> worldState, Dictionary<Tuple<string, object>, object> goal)
+        //public Queue<GOAPAction> Plan(GOAPAgent agent, List<GOAPAction> availableActions, Dictionary<Tuple<string, object>, object> worldState, Dictionary<Tuple<string, object>, object> goal)
+        public Queue<GOAPAction> Plan(GOAPAgent agent, List<GOAPAction> availableActions, Dictionary<Tuple<string, object>, object> worldState, List<KeyValuePair<Tuple<string, object>, object>> goal)
         {
-            foreach (GOAPAction a in availableActions)
-                a.Reset();
-
-            List<GOAPAction> UseableActions = new List<GOAPAction>();
-            foreach (GOAPAction a in availableActions)
-                if (a.CheckProceduralPrecondition(agent))
-                    UseableActions.Add(a);
-
+            bool Success = false;
             List<Node> Tree = new List<Node>();
+            foreach (KeyValuePair<Tuple<string,object>,object> kvp in goal )
+            {
+                foreach (GOAPAction a in availableActions)
+                    a.Reset();
 
-            Node Start = new Node(null, 0, worldState, null);
-            bool Success = BuildGraph(Start, Tree, UseableActions, goal);
+                List<GOAPAction> UseableActions = new List<GOAPAction>();
+                foreach (GOAPAction a in availableActions)
+                    if (a.CheckProceduralPrecondition(agent))
+                        UseableActions.Add(a);
 
+                Tree = new List<Node>();
+
+                Node Start = new Node(null, 0, worldState, null);
+                Success = BuildGraph(Start, Tree, UseableActions, kvp);
+                if (Success)
+                    break;
+            }
             if (!Success)
                 return null;
 
@@ -65,7 +72,7 @@ namespace StrategyGame
             return queue;
         }
 
-        private bool BuildGraph(Node parent, List<Node> tree, List<GOAPAction> usableActions, Dictionary<Tuple<string, object>, object> goal)
+        private bool BuildGraph(Node parent, List<Node> tree, List<GOAPAction> usableActions, KeyValuePair<Tuple<string, object>, object> goal)
         {
             bool HasSolution = false;
 
@@ -107,6 +114,24 @@ namespace StrategyGame
                 if (!Match)
                     AllMatch = false; ////////////////////this bit is a bit jank
             }
+            return AllMatch;
+        }
+
+        private bool InState(KeyValuePair<Tuple<string,object>,object> test,Dictionary<Tuple<string,object>,object> state)
+        {
+            bool AllMatch = true;
+            //foreach (KeyValuePair<Tuple<string, object>, object> t in test)
+            //{
+                bool Match = false;
+                foreach (KeyValuePair<Tuple<string, object>, object> s in state)
+                    if (s.Equals(test))
+                    {
+                        Match = true;
+                        break;
+                    }
+                if (!Match)
+                    AllMatch = false; ////////////////////this bit is a bit jank
+            //}
             return AllMatch;
         }
 

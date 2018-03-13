@@ -43,6 +43,7 @@ namespace StrategyGame
             Art.LoadContent(Content);
             Map.Initialize();
             Map.LoadMap("ISLAND");
+            Food.Initialize();
             Recipe.Initialize();
             Gather.Initialize();
             UnitBase.Initialize();

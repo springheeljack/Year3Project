@@ -23,6 +23,8 @@ namespace StrategyGame
             //Woodcutter
             List<GOAPAction> Actions = new List<GOAPAction>
             {
+                new EatFood(Food.Dictionary["Bread"]),
+                //new PickUpItem(ItemType.Bread),
                 new StoreItem(ItemType.Log),
                 new GatherResource(Gather.Dictionary["Sticks"]),
                 new GatherResource(Gather.Dictionary["Tree"]),
@@ -33,6 +35,8 @@ namespace StrategyGame
             //Miner
             Actions = new List<GOAPAction>
             {
+                new EatFood(Food.Dictionary["Bread"]),
+                //new PickUpItem(ItemType.Bread),
                 new GatherResource(Gather.Dictionary["IronRock"]),
                 new GatherResource(Gather.Dictionary["IronRockNoPickaxe"]),
                 new GatherResource(Gather.Dictionary["CoalRock"]),
@@ -46,6 +50,8 @@ namespace StrategyGame
             //Blacksmith
             Actions = new List<GOAPAction>
             {
+                new EatFood(Food.Dictionary["Bread"]),
+                //new PickUpItem(ItemType.Bread),
                 new PickUpItem(ItemType.IronOre),
                 new PickUpItem(ItemType.Log),
                 new PickUpItem(ItemType.Coal),
@@ -62,6 +68,8 @@ namespace StrategyGame
             //Farmer
             Actions = new List<GOAPAction>
             {
+                new EatFood(Food.Dictionary["Bread"]),
+                //new PickUpItem(ItemType.Bread),
                 new GatherResource(Gather.Dictionary["FarmNoScythe"]),
                 new GatherResource(Gather.Dictionary["Farm"]),
                 new StoreItem(ItemType.Wheat),
@@ -72,6 +80,8 @@ namespace StrategyGame
             //Miller
             Actions = new List<GOAPAction>
             {
+                new EatFood(Food.Dictionary["Bread"]),
+                //new PickUpItem(ItemType.Bread),
                 new StoreItem(ItemType.Flour),
                 new PickUpItem(ItemType.Wheat),
                 new CreateItem(Recipe.Dictionary["Flour"])
@@ -81,6 +91,8 @@ namespace StrategyGame
             //Baker
             Actions = new List<GOAPAction>
             {
+                new EatFood(Food.Dictionary["Bread"]),
+                //new PickUpItem(ItemType.Bread),
                 new StoreItem(ItemType.Bread),
                 new PickUpItem(ItemType.Flour),
                 new PickUpItem(ItemType.Log),
@@ -106,12 +118,22 @@ namespace StrategyGame
         public Inventory Inventory { get; private set; }
         public float MoveSpeed { get; private set; }
         public List<GOAPAction> Actions { get; private set; }
+        public int FoodLevel { get; private set; }
 
         public Unit(UnitBase unitBase, Vector2 position) : base(position, unitBase.Name, unitBase.Size, unitBase.Texture)
         {
             Inventory = new Inventory(unitBase.InventoryCapacity);
             Actions = unitBase.Actions;
             MoveSpeed = unitBase.MoveSpeed;
+            FoodLevel = 100;
+        }
+
+        public void EatFood(Food food)
+        {
+            Inventory.RemoveItem(food.ItemType);
+            FoodLevel += food.RestoreAmount;
+            if (FoodLevel > 100)
+                FoodLevel = 100;
         }
 
         public override void Update()
@@ -121,7 +143,34 @@ namespace StrategyGame
                 Start();
                 Started = true;
             }
-            UpdateAgent();
+            if (EntityManager.GetEnemies().Count > 0)
+            {
+                Vector2 movement = Vector2.Zero;
+                List<Enemy> enemies = EntityManager.GetEnemies();
+                foreach (Enemy e in enemies)
+                {
+                    Vector2 vector = Position - e.Position;
+                    vector.Normalize();
+                    movement += vector;
+                }
+                movement.Normalize();
+                float step = MoveSpeed * (float)Global.gameTime.ElapsedGameTime.TotalSeconds;
+                movement *= step;
+                Position += movement;
+                if (Position.X < 16)
+                    Position = new Vector2(16, Position.Y);
+                if (Position.Y < 16)
+                    Position = new Vector2(Position.X, 16);
+                if (Position.X > 944)
+                    Position = new Vector2(944, Position.Y);
+                if (Position.Y > 624)
+                    Position = new Vector2(Position.X, 624);
+            }
+            else
+            {
+                UpdateAgent();
+            }
+
             base.Update();
         }
 
@@ -137,9 +186,9 @@ namespace StrategyGame
             return WorldData;
         }
 
-        public void PlanFailed(Dictionary<Tuple<string, object>, object> failedGoal) { }
+        public void PlanFailed(KeyValuePair<Tuple<string, object>, object> failedGoal) { }
 
-        public void PlanFound(Dictionary<Tuple<string, object>, object> goal, Queue<GOAPAction> actions) { }
+        public void PlanFound(KeyValuePair<Tuple<string, object>, object> goal, Queue<GOAPAction> actions) { }
 
         public void ActionsFinished()
         {
@@ -171,16 +220,19 @@ namespace StrategyGame
                 return false;
         }
 
-        public abstract Dictionary<Tuple<string, object>, object> CreateGoalState();
+        public abstract List<KeyValuePair<Tuple<string, object>, object>> CreateGoalState();
     }
 
     public class Miner : Unit
     {
         public Miner(Vector2 position) : base(UnitBase.Bases["Miner"], position) { }
 
-        public override Dictionary<Tuple<string, object>, object> CreateGoalState()
+        public override List<KeyValuePair<Tuple<string, object>, object>> CreateGoalState()
         {
-            Dictionary<Tuple<string, object>, object> goal = new Dictionary<Tuple<string, object>, object>();
+            List<KeyValuePair<Tuple<string, object>, object>> goal = new List<KeyValuePair<Tuple<string, object>, object>>();
+            if (FoodLevel < 70)
+                goal.Add(new KeyValuePair<Tuple<string, object>, object>(new Tuple<string, object>("EatFood", Food.Dictionary["Bread"]), true));
+
             int ironOre = 0;
             int coal = 0;
             List<Building> stockpiles = EntityManager.GetBuildings().Where(x => x.BuildingType == BuildingType.Stockpile).ToList();
@@ -193,9 +245,9 @@ namespace StrategyGame
                     ironOre += items[ItemType.IronOre];
             }
             if (coal < ironOre)
-                goal.Add(new Tuple<string, object>("StoreItem", ItemType.Coal), true);
+                goal.Add(new KeyValuePair<Tuple<string, object>, object>(new Tuple<string, object>("StoreItem", ItemType.Coal), true));
             else
-                goal.Add(new Tuple<string, object>("StoreItem", ItemType.IronOre), true);
+                goal.Add(new KeyValuePair<Tuple<string, object>, object>(new Tuple<string, object>("StoreItem", ItemType.IronOre), true));
             return goal;
         }
     }
@@ -204,12 +256,12 @@ namespace StrategyGame
     {
         public Woodcutter(Vector2 position) : base(UnitBase.Bases["Woodcutter"], position) { }
 
-        public override Dictionary<Tuple<string, object>, object> CreateGoalState()
+        public override List<KeyValuePair<Tuple<string, object>, object>> CreateGoalState()
         {
-            Dictionary<Tuple<string, object>, object> goal = new Dictionary<Tuple<string, object>, object>
-            {
-                { new Tuple<string, object>("StoreItem", ItemType.Log), true }
-            };
+            List < KeyValuePair<Tuple<string, object>, object>> goal = new List<KeyValuePair<Tuple<string, object>, object>>();
+            //if (FoodLevel < 70)
+            //    goal.Add(new KeyValuePair<Tuple<string, object>, object>(new Tuple<string, object>("EatFood", Food.Dictionary["Bread"]), true));
+            goal.Add(new KeyValuePair<Tuple<string, object>, object>(new Tuple<string, object>("StoreItem", ItemType.Log), true));
             return goal;
         }
     }
@@ -218,9 +270,9 @@ namespace StrategyGame
     {
         public Blacksmith(Vector2 position) : base(UnitBase.Bases["Blacksmith"], position) { }
 
-        public override Dictionary<Tuple<string, object>, object> CreateGoalState()
+        public override List<KeyValuePair<Tuple<string, object>, object>> CreateGoalState()
         {
-            Dictionary<Tuple<string, object>, object> goal = new Dictionary<Tuple<string, object>, object>();
+            List<KeyValuePair<Tuple<string, object>, object>> goal = new List<KeyValuePair<Tuple<string, object>, object>>();
 
             ItemType[] items = { ItemType.Scythe, ItemType.IronAxe, ItemType.IronPickaxe };
             List<Building> stockpiles = EntityManager.GetBuildings().Where(x => x.BuildingType == BuildingType.Stockpile).ToList();
@@ -245,7 +297,7 @@ namespace StrategyGame
                     lowestItem = i;
                 }
             }
-            goal.Add(new Tuple<string, object>("StoreItem", lowestItem), true);
+            goal.Add(new KeyValuePair<Tuple<string, object>, object>(new Tuple<string, object>("StoreItem", lowestItem), true));
             return goal;
         }
     }
@@ -254,10 +306,10 @@ namespace StrategyGame
     {
         public Farmer(Vector2 position) : base(UnitBase.Bases["Farmer"], position) { }
 
-        public override Dictionary<Tuple<string, object>, object> CreateGoalState()
+        public override List<KeyValuePair<Tuple<string, object>, object>> CreateGoalState()
         {
-            Dictionary<Tuple<string, object>, object> goal = new Dictionary<Tuple<string, object>, object>();
-            goal.Add(new Tuple<string, object>("StoreItem", ItemType.Wheat), true);
+            List<KeyValuePair<Tuple<string, object>, object>> goal = new List<KeyValuePair<Tuple<string, object>, object>>();
+            goal.Add(new KeyValuePair<Tuple<string, object>, object>(new Tuple<string, object>("StoreItem", ItemType.Wheat), true));
             return goal;
         }
     }
@@ -266,10 +318,10 @@ namespace StrategyGame
     {
         public Miller(Vector2 position) : base(UnitBase.Bases["Miller"], position) { }
 
-        public override Dictionary<Tuple<string, object>, object> CreateGoalState()
+        public override List<KeyValuePair<Tuple<string, object>, object>> CreateGoalState()
         {
-            Dictionary<Tuple<string, object>, object> goal = new Dictionary<Tuple<string, object>, object>();
-            goal.Add(new Tuple<string, object>("StoreItem", ItemType.Flour), true);
+            List<KeyValuePair<Tuple<string, object>, object>> goal = new List<KeyValuePair<Tuple<string, object>, object>>();
+            goal.Add(new KeyValuePair<Tuple<string, object>, object>(new Tuple<string, object>("StoreItem", ItemType.Flour), true));
             return goal;
         }
     }
@@ -278,10 +330,10 @@ namespace StrategyGame
     {
         public Baker(Vector2 position) : base(UnitBase.Bases["Baker"], position) { }
 
-        public override Dictionary<Tuple<string, object>, object> CreateGoalState()
+        public override List<KeyValuePair<Tuple<string, object>, object>> CreateGoalState()
         {
-            Dictionary<Tuple<string, object>, object> goal = new Dictionary<Tuple<string, object>, object>();
-            goal.Add(new Tuple<string, object>("StoreItem", ItemType.Bread), true);
+            List<KeyValuePair<Tuple<string, object>, object>> goal = new List<KeyValuePair<Tuple<string, object>, object>>();
+            goal.Add(new KeyValuePair<Tuple<string, object>, object>(new Tuple<string, object>("StoreItem", ItemType.Bread), true));
             return goal;
         }
     }

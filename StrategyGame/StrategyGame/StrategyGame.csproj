@@ -41,8 +41,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Enemy.cs" />
+    <Compile Include="Food.cs" />
     <Compile Include="Gather.cs" />
     <Compile Include="GOAP\Actions\CreateItem.cs" />
+    <Compile Include="GOAP\Actions\EatFood.cs" />
     <Compile Include="GOAP\Actions\GatherResource.cs" />
     <Compile Include="GOAP\Actions\PickUpItem.cs" />
     <Compile Include="GOAP\Actions\StoreItem.cs" />
@@ -103,6 +106,7 @@
     <Content Include="Icon.ico" />
     <Content Include="Text\ideas.txt" />
     <Content Include="Text\sources.txt" />
+    <Content Include="Text\things.txt" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />

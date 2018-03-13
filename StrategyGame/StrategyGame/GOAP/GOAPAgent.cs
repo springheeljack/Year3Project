@@ -16,6 +16,7 @@ namespace StrategyGame
         private FSM.FSMState IdleState;
         private FSM.FSMState MoveToState;
         private FSM.FSMState PerformActionState;
+        private FSM.FSMState FleeState;
         private LinkedList<Text> ThoughtLog = new LinkedList<Text>();
         public Vector2 PlannedLocation;
 
@@ -36,6 +37,7 @@ namespace StrategyGame
             CreateIdleState();
             CreateMoveToState();
             CreatePerformActionState();
+            //CreateFleeState();
             fsm.PushState(IdleState);
             LoadActions();
         }
@@ -68,26 +70,43 @@ namespace StrategyGame
             return CurrentActions.Count > 0;
         }
 
+        private bool ShouldFlee()
+        {
+            return EntityManager.GetEnemies().Count > 0;
+        }
+
+        private void CreateFleeState()
+        {
+            FleeState = (fsm, agent) =>
+            {
+                if (ShouldFlee())
+                {
+
+                }
+            };
+        }
+
         private void CreateIdleState()
         {
             IdleState = (fsm, agent) =>
             {
                 Dictionary<Tuple<string, object>, object> WorldState = DataProvider.GetWorldState();
-                Dictionary<Tuple<string, object>, object> Goal = DataProvider.CreateGoalState();
+                List<KeyValuePair<Tuple<string, object>, object>> Goal = DataProvider.CreateGoalState();
 
                 Queue<GOAPAction> Plan = Planner.Plan(agent, AvailableActions, WorldState, Goal);
                 if (Plan != null)
                 {
-                    AddThought("Plan created for goal " + Goal.Keys.First(), Color.DarkBlue);
+                    //AddThought("Plan created for goal " + Goal.Keys.First(), Color.DarkBlue);
+                    AddThought("Plan created for goal  " + Goal[0].Key.ToString(), Color.DarkBlue);
                     CurrentActions = Plan;
-                    DataProvider.PlanFound(Goal, Plan);
+                    DataProvider.PlanFound(Goal[0], Plan);
 
                     fsm.PopState();
                     fsm.PushState(PerformActionState);
                 }
                 else
                 {
-                    DataProvider.PlanFailed(Goal);
+                    DataProvider.PlanFailed(Goal[0]);
                     fsm.PopState();
                     fsm.PushState(IdleState);
                 }

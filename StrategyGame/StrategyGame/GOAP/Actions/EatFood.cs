@@ -1,35 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace StrategyGame.GOAP.Actions
 {
-    public class PickUpItem : GOAPAction
+    public class EatFood : GOAPAction
     {
         public override string ToString()
         {
-            return "Pick up " + Item.ToString();
+            return "Eat " + Food.ItemType.ToString();
         }
 
-        private bool PickedUp = false;
-        private ItemType Item;
+        private bool Eaten = false;
+        private Food Food;
 
-        public PickUpItem(ItemType item)
+        public EatFood(Food food)
         {
-            Item = item;
-            Preconditions.Add(new Tuple<string, object>("HasItem", item), false);
-            Effects.Add(new Tuple<string, object>("HasItem", item), true);
-            Cost = 1;
+            Food = food;
+            Preconditions.Add(new Tuple<string, object>("HasItem", Food.ItemType), true);
+            Effects.Add(new Tuple<string, object>("HasItem", Food.ItemType), false);
+            Effects.Add(new Tuple<string, object>("EatItem", Food.ItemType), true);
+            Cost = 5;
         }
 
         public override void ResetExtra()
         {
-            PickedUp = false;
+            Eaten = false;
         }
 
         public override bool IsDone()
         {
-            return PickedUp;
+            return Eaten;
         }
 
         public override bool RequiresInRange()
@@ -44,7 +47,7 @@ namespace StrategyGame.GOAP.Actions
             float distance = 0;
             foreach (Building b in buildings.Where(x => x.BuildingType == BuildingType.Stockpile))
             {
-                if (b.Inventory.Items.ContainsKey(Item))
+                if (b.Inventory.Items.ContainsKey(Food.ItemType))
                     if (nearest == null)
                     {
                         nearest = b;
@@ -61,22 +64,18 @@ namespace StrategyGame.GOAP.Actions
                     }
             }
             Target = nearest;
-            if (Target !=null)
+            if (Target != null)
                 agent.PlannedLocation = Target.Position;
             return nearest != null;
         }
 
         public override bool Run(Entity entity)
         {
-            if ((Target as Building).Inventory.Items.ContainsKey(Item))
-            {
-                (entity as Unit).Inventory.AddItem(Item);
-                (Target as Building).Inventory.RemoveItem(Item);
-                PickedUp = true;
-                return true;
-            }
-            else
-                return false;
+            (entity as Unit).EatFood(Food);
+            
+            Eaten = true;
+
+            return true;
         }
     }
 }

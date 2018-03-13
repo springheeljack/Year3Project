@@ -39,7 +39,7 @@ namespace StrategyGame
                 }
                 if (Input.IsRightClicked())
                 {
-                    ///////////////spawn creep
+                    EntityManager.ToAdd.Add(new Enemy(Input.MouseState.Position.ToVector2()));
                 }
             }
         }
@@ -59,6 +59,8 @@ namespace StrategyGame
                     type += "Unit";
                 else if (Global.selected is ResourceNode)
                     type += "Resource Node";
+                else if (Global.selected is Enemy)
+                    type += "Enemy";
                 spriteBatch.DrawString(Art.SmallFont, type, new Vector2(970, 40), Color.Black);
 
                 Inventory inv = null;

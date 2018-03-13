@@ -73,6 +73,25 @@ namespace StrategyGame
         {
             return Entities.OfType<ResourceNode>().ToList();
         }
+
+        public static List<Unit> GetUnits()
+        {
+            return Entities.OfType<Unit>().ToList();
+        }
+
+        public static List<Enemy> GetEnemies()
+        {
+            return Entities.OfType<Enemy>().ToList();
+        }
+
+        public static int NumberOfItemStored(ItemType item)
+        {
+            int count = 0;
+            foreach (Building b in GetBuildings().Where(x => x.BuildingType == BuildingType.Stockpile))
+                foreach (KeyValuePair<ItemType, int> kvp in b.Inventory.Items.Where(x => x.Key == item))
+                    count += kvp.Value;
+            return count;
+        }
     }
 
     //public abstract class Entity : IRectangleObject

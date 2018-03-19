@@ -1,20 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace StrategyGame
 {
     public class Tile
     {
         Texture2D texture;
-        public Texture2D Texture { set { texture = value; } }
-        int textureIndex;
-        public int TextureIndex { get { return textureIndex; } set { textureIndex = value; } }
         int cost;
-        public int Cost { get { return cost; } }
         Point position;
         Rectangle rectangle;
 
-        public Tile(Texture2D texture, int X, int Y, int Cost, int TextureIndex)
+        public Tile(Texture2D texture, int X, int Y, int Cost)
         {
             this.texture = texture;
             position = new Point(X*Game.TileSize*Game.GameScale, Y * Game.TileSize * Game.GameScale);
@@ -23,7 +24,6 @@ namespace StrategyGame
             rectangle.Offset(position);
             rectangle.Width *= Game.GameScale;
             rectangle.Height *= Game.GameScale;
-            textureIndex = TextureIndex;
         }
 
         public void Draw(SpriteBatch spriteBatch)

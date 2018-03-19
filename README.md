@@ -2,7 +2,7 @@
 
 ## Downloads
 ### Executable
-[Download](StrategyGame/StrategyGame/StrategyGame.zip)
+[Download](raw/dev/StrategyGame/StrategyGame/StrategyGame.zip)
 ### Source
 [Download](StrategyGame/StrategyGame/Source.zip)
 

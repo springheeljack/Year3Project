@@ -1,0 +1,4 @@
+﻿Things to write about:
+Generalisation of GOAP actions
+Expanded state variables
+Position planning

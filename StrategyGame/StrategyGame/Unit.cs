@@ -99,6 +99,10 @@ namespace StrategyGame
                 new CreateItem(Recipe.Dictionary["Bread"])
             };
             Bases.Add("Baker", new UnitBase("Baker", new Point(32), Art.Textures["Baker"], 10, 75, Actions));
+
+            //Fighter
+            Actions = new List<GOAPAction>();
+            Bases.Add("Fighter", new UnitBase("Fighter", new Point(32), Art.Textures["Fighter"], 10, 150, Actions));
         }
 
         public UnitBase(string name, Point size, Texture2D texture, int inventoryCapacity, float moveSpeed, List<GOAPAction> actions)
@@ -145,30 +149,89 @@ namespace StrategyGame
             }
             if (EntityManager.GetEnemies().Count > 0)
             {
-                Vector2 movement = Vector2.Zero;
-                List<Enemy> enemies = EntityManager.GetEnemies();
-                foreach (Enemy e in enemies)
+                if (this is Fighter)
                 {
-                    Vector2 vector = Position - e.Position;
-                    vector.Normalize();
-                    movement += vector;
+                    Fighter thisfighter = this as Fighter;
+                    if (thisfighter.Target == null)
+                    {
+                        List<Enemy> enemies = EntityManager.GetEnemies();
+                        float dist = 1000000f;
+                        (this as Fighter).Target = null;
+                        foreach (Enemy e in enemies)
+                        {
+                            float tempdist = Position.Distance(e.Position);
+                            if (tempdist < dist)
+                            {
+                                dist = tempdist;
+                                thisfighter.Target = e;
+                            }
+                        }
+                        AddThought("Fighting enemy!", Color.Red);
+                    }
+                    if (thisfighter.Target != null)
+                    {
+                        if (Position.Distance(thisfighter.Target.Position) <= 10.0f)
+                        {
+                            EntityManager.ToRemove.Add(thisfighter.Target);
+                            thisfighter.Target = null;
+                            AddThought("Enemy killed", Color.Green);
+                        }
+                        else
+                        {
+                            Vector2 movement = Vector2.Zero;
+                            movement = thisfighter.Target.Position - Position;
+                            movement.Normalize();
+                            float step = MoveSpeed * (float)Global.gameTime.ElapsedGameTime.TotalSeconds;
+                            movement *= step;
+                            Position += movement;
+                        }
+                    }
                 }
-                movement.Normalize();
-                float step = MoveSpeed * (float)Global.gameTime.ElapsedGameTime.TotalSeconds;
-                movement *= step;
-                Position += movement;
-                if (Position.X < 16)
-                    Position = new Vector2(16, Position.Y);
-                if (Position.Y < 16)
-                    Position = new Vector2(Position.X, 16);
-                if (Position.X > 944)
-                    Position = new Vector2(944, Position.Y);
-                if (Position.Y > 624)
-                    Position = new Vector2(Position.X, 624);
+                else
+                {
+                    Vector2 movement = Vector2.Zero;
+                    List<Enemy> enemies = EntityManager.GetEnemies();
+                    foreach (Enemy e in enemies)
+                    {
+                        Vector2 vector = Position - e.Position;
+                        vector.Normalize();
+                        movement += vector;
+                    }
+                    movement.Normalize();
+                    float step = MoveSpeed * (float)Global.gameTime.ElapsedGameTime.TotalSeconds;
+                    movement *= step;
+                    Position += movement;
+                    if (Position.X < 16)
+                        Position = new Vector2(16, Position.Y);
+                    if (Position.Y < 16)
+                        Position = new Vector2(Position.X, 16);
+                    if (Position.X > 944)
+                        Position = new Vector2(944, Position.Y);
+                    if (Position.Y > 624)
+                        Position = new Vector2(Position.X, 624);
+
+                    if (GetThoughts() != null)
+                    {
+                        if (GetThoughts().Count == 0 || GetThoughts().First.Value.String != "Fleeing from enemy!")
+                        {
+                            AddThought("Fleeing from enemy!", Color.Red);
+                        }
+                    }
+                }
             }
             else
             {
-                UpdateAgent();
+                if (!(this is Fighter))
+                {
+                    if (GetThoughts() != null)
+                        if (GetThoughts().Count > 0 && GetThoughts().First.Value.String == "Fleeing from enemy!")
+                            AddThought("No longer fleeing from enemy", Color.Green);
+                    UpdateAgent();
+                }
+                else
+                {
+
+                }
             }
 
             base.Update();
@@ -336,6 +399,15 @@ namespace StrategyGame
             goal.Add(new KeyValuePair<Tuple<string, object>, object>(new Tuple<string, object>("StoreItem", ItemType.Bread), true));
             return goal;
         }
+    }
+
+    public class Fighter : Unit
+    {
+        public Enemy Target = null;
+
+        public Fighter(Vector2 position) : base(UnitBase.Bases["Fighter"], position) { }
+
+        public override List<KeyValuePair<Tuple<string, object>, object>> CreateGoalState() { return null; }
     }
 }
 

@@ -72,6 +72,7 @@ namespace StrategyGame
             EntityManager.ToAdd.Add(new Farmer(new Vector2(500, 250)));
             EntityManager.ToAdd.Add(new Miller(new Vector2(500, 400)));
             EntityManager.ToAdd.Add(new Baker(new Vector2(700, 400)));
+            EntityManager.ToAdd.Add(new Fighter(new Vector2(600, 300)));
         }
 
         protected override void UnloadContent()

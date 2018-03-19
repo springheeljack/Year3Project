@@ -23,15 +23,16 @@ namespace StrategyGame
                 float dist = 99999999;
                 foreach (Unit u in units)
                 {
-                    if (u.Position.Distance(Position) < dist)
-                    {
-                        dist = u.Position.Distance(Position);
-                        Target = u;
-                    }
+                    if (!(u is Fighter))
+                        if (u.Position.Distance(Position) < dist)
+                        {
+                            dist = u.Position.Distance(Position);
+                            Target = u;
+                        }
                 }
             }
 
-            if (Target !=null)
+            if (Target != null)
             {
                 Vector2 movement = Target.Position - Position;
                 movement.Normalize();

@@ -2,7 +2,7 @@
 
 ## Downloads
 ### Executable
-Download link here:
+[Download](StrategyGame/StrategyGame/StrategyGame.zip).
 
 ### XNA Redist
 Download link here:

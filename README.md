@@ -2,7 +2,7 @@
 
 ## Downloads
 ### Executable
-[Download](raw/dev/StrategyGame/StrategyGame/StrategyGame.zip)
+[Download](https://github.com/springheeljack/Year3Project/raw/master/Downloads/Game.zip)
 
 ## Prerequisites
 ### Microsoft XNA Framework Redistributable 4.0

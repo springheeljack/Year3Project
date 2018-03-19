@@ -1,0 +1,5 @@
+﻿enemy unit
+fighter unit
+food system
+farmer
+fleeing

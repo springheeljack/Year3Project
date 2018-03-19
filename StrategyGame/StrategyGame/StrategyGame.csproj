@@ -41,17 +41,39 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Button.cs" />
+    <Compile Include="Enemy.cs" />
+    <Compile Include="Food.cs" />
+    <Compile Include="Gather.cs" />
+    <Compile Include="GOAP\Actions\CreateItem.cs" />
+    <Compile Include="GOAP\Actions\EatFood.cs" />
+    <Compile Include="GOAP\Actions\GatherResource.cs" />
+    <Compile Include="GOAP\Actions\PickUpItem.cs" />
+    <Compile Include="GOAP\Actions\StoreItem.cs" />
+    <Compile Include="Building.cs" />
+    <Compile Include="Entity.cs" />
+    <Compile Include="Extension\SpriteBatchExtension.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="KeyboardExtension.cs" />
-    <Compile Include="MainMenu.cs" />
+    <Compile Include="Global.cs" />
+    <Compile Include="GOAP\FSM.cs" />
+    <Compile Include="GOAP\IFSMState.cs" />
+    <Compile Include="GOAP\GOAPAction.cs" />
+    <Compile Include="GOAP\GOAPAgent.cs" />
+    <Compile Include="GOAP\GOAPPlanner.cs" />
+    <Compile Include="GOAP\IGOAP.cs" />
+    <Compile Include="Input.cs" />
+    <Compile Include="Inventory.cs" />
+    <Compile Include="Item.cs" />
     <Compile Include="Map.cs" />
-    <Compile Include="MapEditor.cs" />
-    <Compile Include="MouseExtension.cs" />
+    <Compile Include="Extension\PointExtension.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextureManager.cs" />
+    <Compile Include="Recipe.cs" />
+    <Compile Include="ResourceNode.cs" />
+    <Compile Include="Art.cs" />
     <Compile Include="Tile.cs" />
+    <Compile Include="UI.cs" />
+    <Compile Include="Unit.cs" />
+    <Compile Include="Extension\Vector2Extension.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
@@ -61,14 +83,43 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Texture\Building\Smelter.png" />
+    <Content Include="Content\Texture\Building\Stockpile.png" />
+    <Content Include="Content\Texture\Building\Town Center.png" />
+    <Content Include="Content\Texture\ResourceNode\Coal Rock.png" />
+    <Content Include="Content\Texture\ResourceNode\Iron Rock.png" />
+    <Content Include="Content\Texture\ResourceNode\Tree.png" />
+    <Content Include="Content\Texture\Tile\Grass.png" />
+    <Content Include="Content\Texture\Tile\Test.png" />
+    <Content Include="Content\Texture\Tile\Water.png" />
+    <Content Include="Content\Texture\UI\Background.png" />
+    <Content Include="Content\Texture\UI\Button.png" />
+    <Content Include="Content\Texture\UI\Fade.png" />
+    <Content Include="Content\Texture\UI\Flag.png" />
+    <Content Include="Content\Texture\UI\GreenFlag.png" />
+    <Content Include="Content\Texture\UI\Reticle.png" />
+    <Content Include="Content\Texture\UI\Screen.png" />
+    <Content Include="Content\Texture\UI\Selector.png" />
+    <Content Include="Content\Texture\Unit\Builder.png" />
+    <Content Include="Content\Texture\Unit\Creep.png" />
+    <Content Include="Content\Texture\Unit\Miner.png" />
     <Content Include="Icon.ico" />
+    <Content Include="Text\ideas.txt" />
+    <Content Include="Text\sources.txt" />
+    <Content Include="Text\things.txt" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+    <None Include="Content\Font\large.spritefont" />
+    <None Include="Content\Font\small.spritefont" />
+    <None Include="Content\Map\ISLAND.sgmap">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Map\test.sgmap">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StrategyGame.zip" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

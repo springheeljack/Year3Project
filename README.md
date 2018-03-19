@@ -3,8 +3,6 @@
 ## Downloads
 ### Executable
 [Download](raw/dev/StrategyGame/StrategyGame/StrategyGame.zip)
-### Source
-[Download](StrategyGame/StrategyGame/Source.zip)
 
 ## Prerequisites
 ### Microsoft XNA Framework Redistributable 4.0
